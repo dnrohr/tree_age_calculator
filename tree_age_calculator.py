@@ -3,16 +3,16 @@ import math
 
 # Species-specific constants from the table for use in growth calculations
 species_data = {
-    "White pine": {"mean_bai": 13.4, "linear_coeff": 13.6, "curvature_coeff": 0.28, "s": 6.9, "n": 511},
-    "Hemlock": {"mean_bai": 9.7, "linear_coeff": 9.9, "curvature_coeff": -0.07, "s": 5.6, "n": 450},
-    "Yellow birch": {"mean_bai": 8.8, "linear_coeff": 12.1, "curvature_coeff": -0.27, "s": 5.2, "n": 183},
-    "Red spruce": {"mean_bai": 8.5, "linear_coeff": -5.7, "curvature_coeff": -0.93, "s": 4.9, "n": 2302},
-    "Red oak": {"mean_bai": 8.1, "linear_coeff": 10.8, "curvature_coeff": 0.19, "s": 4.0, "n": 379},
-    "Sugar maple": {"mean_bai": 8.0, "linear_coeff": 11.7, "curvature_coeff": 0.14, "s": 4.1, "n": 338},
-    "Balsam fir": {"mean_bai": 7.7, "linear_coeff": -1.5, "curvature_coeff": -1.72, "s": 3.6, "n": 359},
-    "White ash": {"mean_bai": 7.6, "linear_coeff": 9.6, "curvature_coeff": 0.59, "s": 4.5, "n": 143},
-    "American beech": {"mean_bai": 6.7, "linear_coeff": 25.2, "curvature_coeff": 0.64, "s": 3.4, "n": 137},
-    "Red maple": {"mean_bai": 6.7, "linear_coeff": 1.8, "curvature_coeff": 0.33, "s": 3.4, "n": 296}
+    "White pine":     {"mean_bai": 13.4, "linear_coeff": 13.6, "curvature_coeff": 0.28,  "s": 6.9, "n": 511,  "w": .101},
+    "Hemlock":        {"mean_bai": 9.7,  "linear_coeff": 9.9,  "curvature_coeff": -0.07, "s": 5.6, "n": 450,  "w": .146},
+    "Yellow birch":   {"mean_bai": 8.8,  "linear_coeff": 12.1, "curvature_coeff": -0.27, "s": 5.2, "n": 183,  "w": .159},
+    "Red spruce":     {"mean_bai": 8.5,  "linear_coeff": -5.7, "curvature_coeff": -0.93, "s": 4.9, "n": 2302, "w": .160},
+    "Red oak":        {"mean_bai": 8.1,  "linear_coeff": 10.8, "curvature_coeff": 0.19,  "s": 4.0, "n": 379,  "w": .158},
+    "Sugar maple":    {"mean_bai": 8.0,  "linear_coeff": 11.7, "curvature_coeff": 0.14,  "s": 4.1, "n": 338,  "w": .162},
+    "Balsam fir":     {"mean_bai": 7.7,  "linear_coeff": -1.5, "curvature_coeff": -1.72, "s": 3.6, "n": 359,  "w": .163},
+    "White ash":      {"mean_bai": 7.6,  "linear_coeff": 9.6,  "curvature_coeff": 0.59,  "s": 4.5, "n": 143,  "w": .179},
+    "American beech": {"mean_bai": 6.7,  "linear_coeff": 25.2, "curvature_coeff": 0.64,  "s": 3.4, "n": 137,  "w": .203},
+    "Red maple":      {"mean_bai": 6.7,  "linear_coeff": 1.8,  "curvature_coeff": 0.33,  "s": 3.4, "n": 296,  "w": .192}
 }
 
 def calculate_weighting_factor(species):
@@ -24,19 +24,20 @@ def calculate_weighting_factor(species):
 
 def calculate_growth_rate(species, year):
     """Calculate growth rate based on year, using values for 1900 and 1980 as bounds."""
-    if year < 1900:
-        year = 1900
+    if year < 1950:
+        year = 1950
     elif year > 1980:
         year = 1980
     
     species_info = species_data[species]
     mean_bai = species_info["mean_bai"]
-    linear_coeff = species_info["linear_coeff"]
-    curvature_coeff = species_info["curvature_coeff"]
+    linear_coeff = species_info["linear_coeff"] / 1000.0
+    curvature_coeff = species_info["curvature_coeff"] / 1000.0
+    year_normalized = year - 1965
     W = calculate_weighting_factor(species)
     
     # Mean growth curve formula
-    growth_rate = mean_bai + (year * linear_coeff / W) + ((year**2 - 80) * curvature_coeff / W)
+    growth_rate = mean_bai + (year * linear_coeff / W) + ((year_normalized**2 - 80) * curvature_coeff / W)
     return max(growth_rate, 0)  # Ensure growth rate is non-negative
 
 def integrate_growth_curve(species, circumference_cm):
