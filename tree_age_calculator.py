@@ -4,16 +4,16 @@ from datetime import datetime
 
 # Species-specific constants from the table for use in growth calculations
 species_data = {
-    "White pine":     {"mean_bai": 13.4, "linear_coeff": 13.6, "curvature_coeff": 0.28,  "s": 6.9, "n": 511,  "w": .101},
-    "Hemlock":        {"mean_bai": 9.7,  "linear_coeff": 9.9,  "curvature_coeff": -0.07, "s": 5.6, "n": 450,  "w": .146},
-    "Yellow birch":   {"mean_bai": 8.8,  "linear_coeff": 12.1, "curvature_coeff": -0.27, "s": 5.2, "n": 183,  "w": .159},
-    "Red spruce":     {"mean_bai": 8.5,  "linear_coeff": -5.7, "curvature_coeff": -0.93, "s": 4.9, "n": 2302, "w": .160},
-    "Red oak":        {"mean_bai": 8.1,  "linear_coeff": 10.8, "curvature_coeff": 0.19,  "s": 4.0, "n": 379,  "w": .158},
-    "Sugar maple":    {"mean_bai": 8.0,  "linear_coeff": 11.7, "curvature_coeff": 0.14,  "s": 4.1, "n": 338,  "w": .162},
-    "Balsam fir":     {"mean_bai": 7.7,  "linear_coeff": -1.5, "curvature_coeff": -1.72, "s": 3.6, "n": 359,  "w": .163},
-    "White ash":      {"mean_bai": 7.6,  "linear_coeff": 9.6,  "curvature_coeff": 0.59,  "s": 4.5, "n": 143,  "w": .179},
-    "American beech": {"mean_bai": 6.7,  "linear_coeff": 25.2, "curvature_coeff": 0.64,  "s": 3.4, "n": 137,  "w": .203},
-    "Red maple":      {"mean_bai": 6.7,  "linear_coeff": 1.8,  "curvature_coeff": 0.33,  "s": 3.4, "n": 296,  "w": .192}
+    "White pine":     {"mean_bai": 13.4,  "linear_coeff": 13.6, "curvature_coeff":  0.28, "s": 6.9, "n":  511,  "w": .101},
+    "Hemlock":        {"mean_bai":  9.7,  "linear_coeff":  9.9, "curvature_coeff": -0.07, "s": 5.6, "n":  450,  "w": .146},
+    "Yellow birch":   {"mean_bai":  8.8,  "linear_coeff": 12.1, "curvature_coeff": -0.27, "s": 5.2, "n":  183,  "w": .159},
+    "Red spruce":     {"mean_bai":  8.5,  "linear_coeff": -5.7, "curvature_coeff": -0.93, "s": 4.9, "n": 2302,  "w": .160},
+    "Red oak":        {"mean_bai":  8.1,  "linear_coeff": 10.8, "curvature_coeff":  0.19, "s": 4.0, "n":  379,  "w": .158},
+    "Sugar maple":    {"mean_bai":  8.0,  "linear_coeff": 11.7, "curvature_coeff":  0.14, "s": 4.1, "n":  338,  "w": .162},
+    "Balsam fir":     {"mean_bai":  7.7,  "linear_coeff": -1.5, "curvature_coeff": -1.72, "s": 3.6, "n":  359,  "w": .163},
+    "White ash":      {"mean_bai":  7.6,  "linear_coeff":  9.6, "curvature_coeff":  0.59, "s": 4.5, "n":  143,  "w": .179},
+    "American beech": {"mean_bai":  6.7,  "linear_coeff": 25.2, "curvature_coeff":  0.64, "s": 3.4, "n":  137,  "w": .203},
+    "Red maple":      {"mean_bai":  6.7,  "linear_coeff":  1.8, "curvature_coeff":  0.33, "s": 3.4, "n":  296,  "w": .192}
 }
 
 def calculate_weighting_factor(species):
