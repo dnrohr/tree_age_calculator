@@ -17,10 +17,11 @@ species_data = {
 
 def calculate_weighting_factor(species):
     """Calculate weighting factor W using harmonic mean of BAI values."""
-    species_info = species_data[species]
-    n = species_info["n"]
-    mean_bai = species_info["mean_bai"]
-    return (1 / n) * sum(1 / mean_bai for _ in range(n))
+    # species_info = species_data[species]
+    # n = species_info["n"]
+    # mean_bai = species_info["mean_bai"]
+    # return (1 / n) * sum(1 / mean_bai for _ in range(n))
+    return species_info["w"]
 
 def calculate_growth_rate(species, year):
     """Calculate growth rate based on year, using values for 1900 and 1980 as bounds."""
@@ -34,10 +35,10 @@ def calculate_growth_rate(species, year):
     linear_coeff = species_info["linear_coeff"] / 1000.0
     curvature_coeff = species_info["curvature_coeff"] / 1000.0
     year_normalized = year - 1965
-    W = calculate_weighting_factor(species)
+    w = calculate_weighting_factor(species)
     
     # Mean growth curve formula
-    growth_rate = mean_bai + (year * linear_coeff / W) + ((year_normalized**2 - 80) * curvature_coeff / W)
+    growth_rate = mean_bai + (year * linear_coeff / w) + ((year_normalized**2 - 80) * curvature_coeff / W)
     return max(growth_rate, 0)  # Ensure growth rate is non-negative
 
 def integrate_growth_curve(species, circumference_cm):
