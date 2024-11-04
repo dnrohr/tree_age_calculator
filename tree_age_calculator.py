@@ -38,7 +38,7 @@ def calculate_growth_rate(species, year):
     w = calculate_weighting_factor(species)
     
     # Mean growth curve formula
-    growth_rate = mean_bai + (year * linear_coeff / w) + ((year_normalized**2 - 80) * curvature_coeff / W)
+    growth_rate = mean_bai + (year * linear_coeff / w) + ((year_normalized**2 - 80) * curvature_coeff / w)
     return max(growth_rate, 0)  # Ensure growth rate is non-negative
 
 def integrate_growth_curve(species, circumference_cm):
