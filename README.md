@@ -19,6 +19,26 @@ This program adjusts the basal area increment (BAI) growth rates based on condit
 ## Requirements
 - Python 3.x
 
+## Supported Tree Species
+The program supports the following tree species, each with growth rate data specific to diameter classes:
+
+- Red Spruce
+- Sugar Maple
+- Yellow Birch
+- American Beech
+- Eastern Hemlock
+- Eastern White Pine
+- Northern Red Oak
+- Balsam Fir
+- White Ash
+- Red Maple
+
+## Measuring Tree Circumference
+To accurately calculate the tree’s age, measure the circumference of the tree trunk at "breast height," approximately 1.4 meters (4.5 feet) above the ground:
+1. **Select a Spot**: Measure 1.4 meters up from the base of the tree.
+2. **Wrap Measuring Tape**: Use a flexible measuring tape to wrap around the tree at this height, keeping it straight and snug.
+3. **Record Circumference**: Take note of the circumference in centimeters, as this is the input required for the program.
+
 ## Installation
 Clone this repository and navigate to the directory where the `tree_age_calculator.py` file is located.
 
