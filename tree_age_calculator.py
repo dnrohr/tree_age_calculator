@@ -24,7 +24,7 @@ def calculate_weighting_factor(species):
     return species_info["w"]
 
 def calculate_growth_rate(species, year):
-    """Calculate growth rate based on year, using values for 1900 and 1980 as bounds."""
+    """Calculate growth rate based on year. We only have 1950-1980 for data, so we just apply the end points beyond that."""
     if year < 1950:
         year = 1950
     elif year > 1980:
@@ -59,10 +59,10 @@ def integrate_growth_curve(species, circumference_cm):
         age += 1
 
         # Print progress at intervals
-        if age % print_interval == 0:
-            print(f"Year: {year}, Age estimate: {age} years, Cumulative area: {cumulative_area:.2f}, Target area: {area_target:.2f}")
+        # if age % print_interval == 0:
+        #     print(f"Year: {year}, Age estimate: {age} years, Cumulative area: {cumulative_area:.2f}, Target area: {area_target:.2f}")
 
-    return age
+    return age, year
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
-        age = integrate_growth_curve(args.species, args.circumference_cm)
-        print(f"The estimated age of the {args.species} tree is approximately {age} years.")
+        age, year = integrate_growth_curve(args.species, args.circumference_cm)
+        print(f"The estimated age of the {args.species} tree is approximately {age} years.\nIt was planted in approximately {year}.")
     except ValueError as e:
         print(e)
