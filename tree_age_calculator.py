@@ -63,7 +63,26 @@ def calculate_tree_age(species, circumference_cm, winter_temp=-2, summer_temp=21
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Calculate the estimated age of a tree based on its species, circumference, and environmental conditions."
+        description=(
+            "Calculate the estimated age of a tree based on its species, circumference, "
+            "and environmental conditions.\n\n"
+            "To measure the tree's circumference, measure at 'breast height' (1.4 meters or 4.5 feet above the ground):\n"
+            "1. Select a spot 1.4 meters up from the base of the tree.\n"
+            "2. Wrap a flexible measuring tape around the tree at this height, keeping it straight and snug.\n"
+            "3. Record the circumference in centimeters.\n\n"
+            "Supported species include:\n"
+            "- Red Spruce\n"
+            "- Sugar Maple\n"
+            "- Yellow Birch\n"
+            "- American Beech\n"
+            "- Eastern Hemlock\n"
+            "- Eastern White Pine\n"
+            "- Northern Red Oak\n"
+            "- Balsam Fir\n"
+            "- White Ash\n"
+            "- Red Maple\n"
+        ),
+        formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("species", type=str, help="Species of the tree (e.g., 'Red Spruce', 'Sugar Maple')")
     parser.add_argument("circumference_cm", type=float, help="Circumference of the tree in centimeters")
