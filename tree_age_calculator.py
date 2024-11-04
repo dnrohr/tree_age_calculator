@@ -47,12 +47,19 @@ def integrate_growth_curve(species, circumference_cm):
     year = 2024  # Start from 2024 and work backward
     age = 0
     
+    # Periodic printing every 10 years
+    print_interval = 10
+    
     while cumulative_area < area_target:
         growth_rate = calculate_growth_rate(species, year)
         cumulative_area += growth_rate
         year -= 1
         age += 1
-    
+
+        # Print progress at intervals
+        if age % print_interval == 0:
+            print(f"Year: {year}, Age estimate: {age} years, Cumulative area: {cumulative_area:.2f}, Target area: {area_target:.2f}")
+
     return age
 
 if __name__ == "__main__":
