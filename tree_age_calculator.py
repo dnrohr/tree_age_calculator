@@ -1,5 +1,6 @@
 import argparse
 import math
+from datetime import datetime
 
 # Species-specific constants from the table for use in growth calculations
 species_data = {
@@ -46,7 +47,7 @@ def integrate_growth_curve(species, circumference_cm):
     radius_cm = circumference_cm / (2 * math.pi)
     area_target = math.pi * (radius_cm ** 2)  # Target basal area based on radius
     cumulative_area = 0
-    year = 2024  # Start from 2024 and work backward
+    year = datetime.now().year  # Start at current year and work backward
     age = 0
     
     # Periodic printing every 10 years
