@@ -17,7 +17,7 @@ species_data = {
 
 def calculate_weighting_factor(species):
     """Calculate weighting factor W using harmonic mean of BAI values."""
-    # species_info = species_data[species]
+    species_info = species_data[species]
     # n = species_info["n"]
     # mean_bai = species_info["mean_bai"]
     # return (1 / n) * sum(1 / mean_bai for _ in range(n))
