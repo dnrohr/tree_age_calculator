@@ -23,8 +23,8 @@ This program adjusts the basal area increment (BAI) growth rates based on condit
 Clone this repository and navigate to the directory where the `tree_age_calculator.py` file is located.
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/dnrohr/tree_age_calculator.git
+cd tree_age_calculator
 ```
 
 ## Usage
