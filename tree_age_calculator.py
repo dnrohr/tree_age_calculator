@@ -1,65 +1,59 @@
 import argparse
+import math
 
-# Updated basal area increment (BAI) values per species in cm²/year
-growth_rates = {
-    "Red Spruce": {"small": 1.5, "medium": 2.5, "large": 1.8},
-    "Sugar Maple": {"small": 10.0, "medium": 11.0, "large": 9.0},
-    "Yellow Birch": {"small": 10.5, "medium": 11.5, "large": 12.0},
-    "American Beech": {"small": 9.0, "medium": 9.5, "large": 10.0},
-    "Eastern Hemlock": {"small": 11.0, "medium": 12.0, "large": 13.0},
-    "Eastern White Pine": {"small": 17.0, "medium": 19.0, "large": 22.0},
-    "Northern Red Oak": {"small": 10.0, "medium": 12.0, "large": 13.0},
-    "Balsam Fir": {"small": 9.0, "medium": 10.0, "large": 14.0},
-    "White Ash": {"small": 11.0, "medium": 12.0, "large": 13.0},
-    "Red Maple": {"small": 9.0, "medium": 10.0, "large": 11.0}
+# Species-specific constants from the table for use in growth calculations
+species_data = {
+    "White pine": {"mean_bai": 13.4, "linear_coeff": 13.6, "curvature_coeff": 0.28, "s": 6.9, "n": 511},
+    "Hemlock": {"mean_bai": 9.7, "linear_coeff": 9.9, "curvature_coeff": -0.07, "s": 5.6, "n": 450},
+    "Yellow birch": {"mean_bai": 8.8, "linear_coeff": 12.1, "curvature_coeff": -0.27, "s": 5.2, "n": 183},
+    "Red spruce": {"mean_bai": 8.5, "linear_coeff": -5.7, "curvature_coeff": -0.93, "s": 4.9, "n": 2302},
+    "Red oak": {"mean_bai": 8.1, "linear_coeff": 10.8, "curvature_coeff": 0.19, "s": 4.0, "n": 379},
+    "Sugar maple": {"mean_bai": 8.0, "linear_coeff": 11.7, "curvature_coeff": 0.14, "s": 4.1, "n": 338},
+    "Balsam fir": {"mean_bai": 7.7, "linear_coeff": -1.5, "curvature_coeff": -1.72, "s": 3.6, "n": 359},
+    "White ash": {"mean_bai": 7.6, "linear_coeff": 9.6, "curvature_coeff": 0.59, "s": 4.5, "n": 143},
+    "American beech": {"mean_bai": 6.7, "linear_coeff": 25.2, "curvature_coeff": 0.64, "s": 3.4, "n": 137},
+    "Red maple": {"mean_bai": 6.7, "linear_coeff": 1.8, "curvature_coeff": 0.33, "s": 3.4, "n": 296}
 }
 
-def get_diameter_class(diameter_cm):
-    if diameter_cm < 20:
-        return "small"
-    elif 20 <= diameter_cm < 40:
-        return "medium"
-    else:
-        return "large"
+def calculate_weighting_factor(species):
+    """Calculate weighting factor W using harmonic mean of BAI values."""
+    species_info = species_data[species]
+    n = species_info["n"]
+    mean_bai = species_info["mean_bai"]
+    return (1 / n) * sum(1 / mean_bai for _ in range(n))
 
-def adjust_growth_rate(growth_rate, winter_temp, summer_temp, elevation, tree_age=None, soil_type="loamy"):
-    if winter_temp > -5:
-        growth_rate *= 1.05
-    elif winter_temp < -10:
-        growth_rate *= 0.95
-    if summer_temp > 25:
-        growth_rate *= 0.9
-    elif summer_temp < 15:
-        growth_rate *= 1.05
-    if elevation > 800:
-        growth_rate *= 0.85
-    elif elevation < 400:
-        growth_rate *= 1.05
-    if tree_age is not None:
-        if tree_age > 50:
-            growth_rate *= 0.9
-        if tree_age > 100:
-            growth_rate *= 0.8
-    if soil_type.lower() == "sandy":
-        growth_rate *= 0.9
-    elif soil_type.lower() == "rocky":
-        growth_rate *= 0.85
-    return growth_rate
+def calculate_growth_rate(species, year):
+    """Calculate growth rate based on year, using values for 1900 and 1980 as bounds."""
+    if year < 1900:
+        year = 1900
+    elif year > 1980:
+        year = 1980
+    
+    species_info = species_data[species]
+    mean_bai = species_info["mean_bai"]
+    linear_coeff = species_info["linear_coeff"]
+    curvature_coeff = species_info["curvature_coeff"]
+    W = calculate_weighting_factor(species)
+    
+    # Mean growth curve formula
+    growth_rate = mean_bai + (year * linear_coeff / W) + ((year**2 - 80) * curvature_coeff / W)
+    return max(growth_rate, 0)  # Ensure growth rate is non-negative
 
-def calculate_tree_age(species, circumference_cm, winter_temp=-2, summer_temp=21, elevation=56, tree_age=None, soil_type="loamy"):
-    if species in growth_rates:
-        radius_cm = circumference_cm / (2 * 3.14159)
-        diameter_cm = 2 * radius_cm
-        diameter_class = get_diameter_class(diameter_cm)
-        if diameter_class in growth_rates[species]:
-            base_growth_rate = growth_rates[species][diameter_class]
-            adjusted_growth_rate = adjust_growth_rate(base_growth_rate, winter_temp, summer_temp, elevation, tree_age, soil_type)
-            age = (radius_cm ** 2) / adjusted_growth_rate
-            return int(age)
-        else:
-            raise ValueError(f"Diameter class '{diameter_class}' not found for species '{species}'.")
-    else:
-        raise ValueError(f"Species '{species}' not found in growth rates data.")
+def integrate_growth_curve(species, circumference_cm):
+    """Integrate growth over the years to estimate age based on observed circumference."""
+    radius_cm = circumference_cm / (2 * math.pi)
+    area_target = math.pi * (radius_cm ** 2)  # Target basal area based on radius
+    cumulative_area = 0
+    year = 2024  # Start from 2024 and work backward
+    age = 0
+    
+    while cumulative_area < area_target:
+        growth_rate = calculate_growth_rate(species, year)
+        cumulative_area += growth_rate
+        year -= 1
+        age += 1
+    
+    return age
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -84,23 +78,18 @@ if __name__ == "__main__":
         ),
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument("species", type=str, help="Species of the tree (e.g., 'Red Spruce', 'Sugar Maple')")
+    parser.add_argument("species", type=str, help="Species of the tree (e.g., 'Red spruce', 'White pine')")
     parser.add_argument("circumference_cm", type=float, help="Circumference of the tree in centimeters")
     parser.add_argument("--winter_temp", type=float, default=-2, help="Average winter temperature in degrees Celsius (default: -2°C)")
     parser.add_argument("--summer_temp", type=float, default=21, help="Average summer temperature in degrees Celsius (default: 21°C)")
     parser.add_argument("--elevation", type=float, default=56, help="Elevation in meters (default: 56m)")
     parser.add_argument("--soil_type", type=str, default="loamy", choices=["loamy", "sandy", "rocky"],
                         help="Soil type around the tree (default: loamy)")
-    parser.add_argument("--tree_age", type=int, default=None,
-                        help="Known or estimated age of the tree, if applicable (affects growth rate adjustment)")
 
     args = parser.parse_args()
 
     try:
-        age = calculate_tree_age(
-            args.species, args.circumference_cm, args.winter_temp,
-            args.summer_temp, args.elevation, args.tree_age, args.soil_type
-        )
+        age = integrate_growth_curve(args.species, args.circumference_cm)
         print(f"The estimated age of the {args.species} tree is approximately {age} years.")
     except ValueError as e:
         print(e)
