@@ -6,7 +6,7 @@
 - [x] Milestone 2 - Modular estimator architecture: common abstract interface, registry, and CLI selection.
 - [x] Milestone 3 - Conservative growth-factor fallback: packaged reference table, wide intervals, and context warnings.
 - [x] Milestone 4 - FIA data pipeline: reproducible New England downloads, provenance manifests, normalized extraction, target-quality tracking, and quality reports.
-- [ ] Milestone 5 - FIA age-size model v1.
+- [x] Milestone 5 - FIA age-size model v1: transparent species log-age/log-DBH baseline, state offsets, held-out evaluation, serialization, and CLI integration.
 - [ ] Milestone 6 - Uncertainty model v1.
 - [ ] Milestone 7 - Model card and final documentation.
 

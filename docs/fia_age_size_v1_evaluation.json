@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "model_name": "fia_age_size_v1",
+    "model_version": "1.0.0",
+    "created": "2026-06-20",
+    "training_data": "fia_new_england_clean.csv",
+    "target_types": {
+      "site_tree_age": 2708
+    },
+    "formula": "log(age) = species_intercept + species_slope * log(DBH_cm) + state_offset",
+    "minimum_records_per_species": 20,
+    "states": [
+      "CT",
+      "MA"
+    ]
+  },
+  "training_records": 2157,
+  "validation_records": 544,
+  "mae_years": 11.828,
+  "growth_factor_baseline_mae_years": 14.169,
+  "rmse_years": 15.268,
+  "mae_by_species": {
+    "Hemlock": 15.892,
+    "Red maple": 9.911,
+    "Red oak": 11.437,
+    "Red spruce": 24.355,
+    "Sugar maple": 10.122,
+    "White ash": 14.226,
+    "White pine": 11.736,
+    "Yellow birch": 5.591
+  },
+  "mae_by_state": {
+    "CT": 12.231,
+    "MA": 11.63
+  }
+}

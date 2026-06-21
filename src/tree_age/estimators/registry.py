@@ -4,12 +4,14 @@ from ..errors import ModelError
 from .base import AgeEstimator
 from .bai_reference import BaiReferenceEstimator
 from .growth_factor import GrowthFactorEstimator
+from .fia_age_size import FiaAgeSizeEstimator
 
 EstimatorFactory = Callable[[], AgeEstimator]
 
 ESTIMATORS: dict[str, EstimatorFactory] = {
     "bai_reference": BaiReferenceEstimator,
     "growth_factor": GrowthFactorEstimator,
+    "fia_age_size": FiaAgeSizeEstimator,
 }
 
 

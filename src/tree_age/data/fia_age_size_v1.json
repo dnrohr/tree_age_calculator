@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "model_name": "fia_age_size_v1",
+    "model_version": "1.0.0",
+    "created": "2026-06-20",
+    "training_data": "fia_new_england_clean.csv",
+    "target_types": {
+      "site_tree_age": 2708
+    },
+    "formula": "log(age) = species_intercept + species_slope * log(DBH_cm) + state_offset",
+    "minimum_records_per_species": 20,
+    "states": [
+      "CT",
+      "MA"
+    ]
+  },
+  "species_models": {
+    "Hemlock": {
+      "intercept": 1.84973997,
+      "log_dbh_slope": 0.70125051,
+      "state_offsets": {
+        "CT": -0.19016789,
+        "MA": 0.07043255
+      },
+      "training_records": 148,
+      "validation_records": 38,
+      "validation_mae_years": 15.892
+    },
+    "Red maple": {
+      "intercept": 0.7095957,
+      "log_dbh_slope": 0.98821215,
+      "state_offsets": {
+        "CT": -0.00639461,
+        "MA": 0.00374702
+      },
+      "training_records": 452,
+      "validation_records": 114,
+      "validation_mae_years": 9.911
+    },
+    "Red oak": {
+      "intercept": 1.30712461,
+      "log_dbh_slope": 0.82165815,
+      "state_offsets": {
+        "CT": 0.04673311,
+        "MA": -0.0445376
+      },
+      "training_records": 582,
+      "validation_records": 146,
+      "validation_mae_years": 11.437
+    },
+    "Red spruce": {
+      "intercept": 0.03033263,
+      "log_dbh_slope": 1.20589372,
+      "state_offsets": {
+        "MA": 0.0
+      },
+      "training_records": 24,
+      "validation_records": 6,
+      "validation_mae_years": 24.355
+    },
+    "Sugar maple": {
+      "intercept": 0.30199826,
+      "log_dbh_slope": 1.12417782,
+      "state_offsets": {
+        "CT": 0.01559851,
+        "MA": -0.01231462
+      },
+      "training_records": 102,
+      "validation_records": 26,
+      "validation_mae_years": 10.122
+    },
+    "White ash": {
+      "intercept": 0.98191422,
+      "log_dbh_slope": 0.89415777,
+      "state_offsets": {
+        "CT": 0.00542398,
+        "MA": -0.00342935
+      },
+      "training_records": 253,
+      "validation_records": 64,
+      "validation_mae_years": 14.226
+    },
+    "White pine": {
+      "intercept": 1.05595624,
+      "log_dbh_slope": 0.84739841,
+      "state_offsets": {
+        "CT": -0.0137994,
+        "MA": 0.00166028
+      },
+      "training_records": 568,
+      "validation_records": 142,
+      "validation_mae_years": 11.736
+    },
+    "Yellow birch": {
+      "intercept": 1.78241078,
+      "log_dbh_slope": 0.69522957,
+      "state_offsets": {
+        "MA": 8.905e-05
+      },
+      "training_records": 28,
+      "validation_records": 8,
+      "validation_mae_years": 5.591
+    }
+  }
+}

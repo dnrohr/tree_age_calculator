@@ -43,6 +43,18 @@ LEFT JOIN REF_SPECIES AS r ON r.SPCD = t.SPCD
 WHERE t.STATUSCD = 1 AND t.DIA > 0
 """
 
+SITE_TREE_QUERY = """
+SELECT
+    s.SPCD, r.COMMON_NAME, r.SCIENTIFIC_NAME, s.DIA, s.HT, s.AGEDIA,
+    s.STATECD, s.COUNTYCD, p.LAT, p.LON, p.ELEV, c.SLOPE, c.ASPECT,
+    c.FORTYPCD, c.STDORGCD, s.INVYR
+FROM SITETREE AS s
+JOIN PLOT AS p ON p.CN = s.PLT_CN
+LEFT JOIN COND AS c ON c.PLT_CN = s.PLT_CN AND c.CONDID = s.CONDID
+LEFT JOIN REF_SPECIES AS r ON r.SPCD = s.SPCD
+WHERE s.DIA > 0 AND s.AGEDIA > 0
+"""
+
 
 def _age_target(total_age, breast_height_age, stand_age):
     if total_age and total_age > 0:
@@ -65,6 +77,41 @@ def clean_database(database: Path, output: Path) -> dict[str, object]:
     ) as handle:
         writer = csv.DictWriter(handle, fieldnames=OUTPUT_COLUMNS)
         writer.writeheader()
+        for row in connection.execute(SITE_TREE_QUERY):
+            counts["site_tree_positive_age_rows"] += 1
+            spcd, common, scientific, dia, height, age, statecd, county, lat, lon, elev, slope, aspect, forest_type, origin, invyr = row
+            if age > 600:
+                counts["rejected_implausible_age"] += 1
+                continue
+            if not common or not scientific:
+                counts["rejected_unmapped_species"] += 1
+                continue
+            state = STATE_ABBREVIATIONS.get(statecd, str(statecd))
+            writer.writerow({
+                "species_code": spcd,
+                "species_common_name": common,
+                "species_scientific_name": scientific,
+                "dbh_cm": round(dia * 2.54, 3),
+                "height_m": round(height * 0.3048, 3) if height and height > 0 else "",
+                "age_years": age,
+                "target_type": "site_tree_age",
+                "target_quality": "medium",
+                "state": state,
+                "county": county,
+                "latitude_rounded": round(lat, 2) if lat is not None else "",
+                "longitude_rounded": round(lon, 2) if lon is not None else "",
+                "elevation_m": round(elev * 0.3048, 2) if elev is not None else "",
+                "slope_percent": slope if slope is not None else "",
+                "aspect_degrees": aspect if aspect is not None else "",
+                "forest_type_code": forest_type if forest_type is not None else "",
+                "stand_origin_code": origin if origin is not None else "",
+                "inventory_year": invyr,
+                "source_database_version": database.name,
+            })
+            counts["accepted_rows"] += 1
+            by_species[common] += 1
+            by_target["site_tree_age"] += 1
+            by_state[state] += 1
         for row in connection.execute(QUERY):
             counts["live_positive_dbh_rows"] += 1
             spcd, common, scientific, dia, height, total, bhage, stdage, statecd, county, lat, lon, elev, slope, aspect, forest_type, origin, invyr = row

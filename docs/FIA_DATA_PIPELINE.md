@@ -15,11 +15,12 @@ Raw archives and databases live under `data/raw/fia/`; cleaned files live under 
 
 The cleaner selects the first positive age in this order:
 
-1. `TREE.TOTAGE` as `total_age` with high target quality.
-2. `TREE.BHAGE` as `breast_height_age` with medium target quality.
-3. `COND.STDAGE` as `stand_age_proxy` with low target quality.
+1. `SITETREE.AGE­DIA` as `site_tree_age` with medium target quality. Site trees are deliberately selected and are not a random sample.
+2. `TREE.TOTAGE` as `total_age` with high target quality.
+3. `TREE.BHAGE` as `breast_height_age` with medium target quality.
+4. `COND.STDAGE` as `stand_age_proxy` with low target quality.
 
-Rows without any age target are rejected. Target type and quality remain in every output row, so downstream training can exclude proxy ages or evaluate them separately. Connecticut's current database, for example, defines both individual-tree fields but does not populate them; its usable rows therefore rely on low-quality stand-age proxies.
+Rows without any age target are rejected. Target type and quality remain in every output row, so downstream training can exclude proxy ages or evaluate them separately. Connecticut's current database, for example, defines both ordinary individual-tree fields but does not populate them; measured ages are available for selected site trees, while other usable rows rely on low-quality stand-age proxies.
 
 ## Units and privacy
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-age-estimator"
-version = "0.4.0"
+version = "0.5.0"
 description = "Estimate plausible tree age ranges from species and circumference"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,4 +17,4 @@ tree-age = "tree_age.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-"tree_age.data" = ["*.csv"]
+"tree_age.data" = ["*.csv", "*.json"]

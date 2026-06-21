@@ -13,6 +13,7 @@ CREATE TABLE TREE (SPCD INTEGER, DIA REAL, HT REAL, TOTAGE REAL, BHAGE REAL, STA
 CREATE TABLE PLOT (CN TEXT, LAT REAL, LON REAL, ELEV REAL);
 CREATE TABLE COND (PLT_CN TEXT, CONDID INTEGER, STDAGE REAL, SLOPE REAL, ASPECT REAL, FORTYPCD INTEGER, STDORGCD INTEGER);
 CREATE TABLE REF_SPECIES (SPCD INTEGER, COMMON_NAME TEXT, SCIENTIFIC_NAME TEXT);
+CREATE TABLE SITETREE (SPCD INTEGER, DIA REAL, HT REAL, AGEDIA REAL, STATECD INTEGER, COUNTYCD INTEGER, PLT_CN TEXT, CONDID INTEGER, INVYR INTEGER);
 """
 
 
@@ -27,6 +28,7 @@ class FiaCleanerTests(unittest.TestCase):
                     connection.execute("INSERT INTO PLOT VALUES ('p1', 42.123, -72.987, 1000)")
                     connection.execute("INSERT INTO COND VALUES ('p1', 1, 50, 12, 180, 101, 0)")
                     connection.execute("INSERT INTO REF_SPECIES VALUES (316, 'Red maple', 'Acer rubrum')")
+                    connection.execute("INSERT INTO SITETREE VALUES (316, 9, 45, 90, 9, 1, 'p1', 1, 2025)")
                     connection.executemany(
                         "INSERT INTO TREE VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         [
@@ -40,11 +42,14 @@ class FiaCleanerTests(unittest.TestCase):
             report = clean_database(database, output)
             with output.open(encoding="utf-8", newline="") as handle:
                 rows = list(csv.DictReader(handle))
-            self.assertEqual(len(rows), 3)
-            self.assertEqual([row["target_type"] for row in rows], ["total_age", "breast_height_age", "stand_age_proxy"])
-            self.assertEqual(rows[0]["dbh_cm"], "25.4")
+            self.assertEqual(len(rows), 4)
+            self.assertEqual(
+                [row["target_type"] for row in rows],
+                ["site_tree_age", "total_age", "breast_height_age", "stand_age_proxy"],
+            )
+            self.assertEqual(rows[1]["dbh_cm"], "25.4")
             self.assertEqual(rows[0]["latitude_rounded"], "42.12")
-            self.assertEqual(report["counts"]["accepted_rows"], 3)
+            self.assertEqual(report["counts"]["accepted_rows"], 4)
 
 
 if __name__ == "__main__":
