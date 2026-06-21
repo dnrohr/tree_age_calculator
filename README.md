@@ -70,7 +70,9 @@ python -m pip install -e .
 python -m unittest discover -s tests -v
 ```
 
-The implementation roadmap is in [ROADMAP.md](ROADMAP.md). The next milestones introduce a common estimator registry, a conservative growth-factor fallback, and a reproducible USDA FIA data pipeline before fitting a calibrated age-size model.
+The implementation roadmap is in [ROADMAP.md](ROADMAP.md). The safe CLI, modular estimator registry, conservative fallback, and reproducible USDA FIA pipeline are complete; empirical model training and calibrated uncertainty are next.
+
+The reproducible FIA download and cleaning workflow is documented in [docs/FIA_DATA_PIPELINE.md](docs/FIA_DATA_PIPELINE.md). Data quality review is a required gate before model training.
 
 ## License
 

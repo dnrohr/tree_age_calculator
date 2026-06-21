@@ -5,7 +5,7 @@
 - [x] Milestone 1 - Safe current program (`bai_reference_v1`): structured ranges, bounded integration, species normalization, actionable errors, tested CLI, and honest documentation.
 - [x] Milestone 2 - Modular estimator architecture: common abstract interface, registry, and CLI selection.
 - [x] Milestone 3 - Conservative growth-factor fallback: packaged reference table, wide intervals, and context warnings.
-- [ ] Milestone 4 - FIA data pipeline.
+- [x] Milestone 4 - FIA data pipeline: reproducible New England downloads, provenance manifests, normalized extraction, target-quality tracking, and quality reports.
 - [ ] Milestone 5 - FIA age-size model v1.
 - [ ] Milestone 6 - Uncertainty model v1.
 - [ ] Milestone 7 - Model card and final documentation.
