@@ -37,6 +37,7 @@ The repository's compatibility script also works without installation:
 ```bash
 python tree_age_calculator.py "red spruce" 100
 python tree_age_calculator.py "Acer rubrum" 40 --units in --context yard --json
+python tree_age_calculator.py "red maple" 100 --estimator bai_reference
 ```
 
 Example output:
@@ -51,7 +52,7 @@ Warning: This is a rough estimate from a regional-average BAI model, not a measu
 Warning: The model does not account for competition, disease, soil, climate, or tree-specific growth history.
 ```
 
-Use `--context forest|yard|street|unknown` to identify the growing setting, `--state` to retain location context, and `--json` for structured output. The current model does not adjust its estimate by state or context; it adds a warning for open-grown yard and street trees.
+Use `--estimator` to select a registered algorithm, `--context forest|yard|street|unknown` to identify the growing setting, `--state` to retain location context, and `--json` for structured output. The current model does not adjust its estimate by state or context; it adds a warning for open-grown yard and street trees.
 
 ## Model and limitations
 

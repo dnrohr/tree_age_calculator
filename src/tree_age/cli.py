@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from .errors import TreeAgeError
-from .estimators.bai_reference import BaiReferenceEstimator
+from .estimators.registry import ESTIMATORS, get_estimator
 from .measurements import TreeMeasurement
 from .result import SiteContext
 
@@ -17,6 +17,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--units", choices=("cm", "in"), default="cm")
     parser.add_argument("--context", choices=("forest", "yard", "street", "unknown"), default="unknown")
     parser.add_argument("--state", help="Two-letter US state code")
+    parser.add_argument(
+        "--estimator",
+        choices=tuple(sorted(ESTIMATORS)),
+        default="bai_reference",
+        help="Estimation algorithm (default: bai_reference)",
+    )
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON")
     return parser
 
@@ -25,7 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     circumference_cm = args.circumference * 2.54 if args.units == "in" else args.circumference
     try:
-        estimate = BaiReferenceEstimator().estimate(
+        estimate = get_estimator(args.estimator).estimate(
             args.species,
             TreeMeasurement(circumference_cm),
             SiteContext(state=args.state, context=args.context),
@@ -49,4 +55,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

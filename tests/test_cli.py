@@ -20,6 +20,13 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("Supported species", error.getvalue())
 
+    def test_estimator_can_be_selected(self):
+        output = StringIO()
+        with contextlib.redirect_stdout(output):
+            code = main(["red maple", "100", "--estimator", "bai_reference"])
+        self.assertEqual(code, 0)
+        self.assertIn("Estimator: bai_reference_v1", output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()

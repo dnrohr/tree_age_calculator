@@ -6,6 +6,7 @@ from ..errors import ModelError
 from ..measurements import TreeMeasurement
 from ..result import AgeEstimate, SiteContext
 from ..species import resolve_species
+from .base import AgeEstimator
 
 
 @dataclass(frozen=True)
@@ -30,7 +31,7 @@ PARAMETERS = {
 }
 
 
-class BaiReferenceEstimator:
+class BaiReferenceEstimator(AgeEstimator):
     """Experimental regional-average BAI estimator for New England species."""
 
     name = "bai_reference_v1"
@@ -102,4 +103,3 @@ class BaiReferenceEstimator:
                 "max_age_years": self.max_age,
             },
         )
-

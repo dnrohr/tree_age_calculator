@@ -3,7 +3,7 @@
 ## Progress
 
 - [x] Milestone 1 - Safe current program (`bai_reference_v1`): structured ranges, bounded integration, species normalization, actionable errors, tested CLI, and honest documentation.
-- [ ] Milestone 2 - Modular estimator architecture.
+- [x] Milestone 2 - Modular estimator architecture: common abstract interface, registry, and CLI selection.
 - [ ] Milestone 3 - Conservative growth-factor fallback.
 - [ ] Milestone 4 - FIA data pipeline.
 - [ ] Milestone 5 - FIA age-size model v1.
