@@ -1,5 +1,15 @@
 # Tree Age Estimator Roadmap
 
+## Progress
+
+- [x] Milestone 1 - Safe current program (`bai_reference_v1`): structured ranges, bounded integration, species normalization, actionable errors, tested CLI, and honest documentation.
+- [ ] Milestone 2 - Modular estimator architecture.
+- [ ] Milestone 3 - Conservative growth-factor fallback.
+- [ ] Milestone 4 - FIA data pipeline.
+- [ ] Milestone 5 - FIA age-size model v1.
+- [ ] Milestone 6 - Uncertainty model v1.
+- [ ] Milestone 7 - Model card and final documentation.
+
 ## Purpose
 
 Build a tree-age estimation program that is honest about uncertainty, easy to extend, and grounded in better data than a single regional average growth table.

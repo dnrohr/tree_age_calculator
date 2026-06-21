@@ -1,96 +1,73 @@
 # Tree Age Estimator
 
-This Python program calculates the estimated age of a tree based on its species, circumference, and environmental factors such as temperature, elevation, and soil type. The program uses data and insights derived from the research paper:
+Tree Age Estimator gives a **rough, plausible age range** for a living tree from its species and circumference at breast height. It currently uses an experimental regional-average basal-area-increment (BAI) reference model for ten New England species.
 
-> **"Regionally Averaged Diameter Growth in New England Forests"**  
-> by Robert B. Smith, James W. Hornbeck, C. Anthony Federer, and Paul J. Krusic, Jr.  
-> Published by the USDA Forest Service, Northeastern Forest Experiment Station (Research Paper NE-637)
+Circumference alone cannot reveal a tree's exact age. Competition, climate, disease, soil, damage, and growing context can produce very different ages at the same trunk size. Results are estimates, not planting dates or substitutes for increment-core measurements.
 
-This program adjusts the basal area increment (BAI) growth rates based on conditions specific to New England tree species, including Red Spruce, Sugar Maple, and others, as detailed in the research paper.
+## Supported species
 
-## Features
-- Calculates tree age based on species-specific basal area increments (BAI).
-- Adjusts growth rate based on:
-  - **Seasonal Temperatures**: Winter and summer temperature adjustments.
-  - **Elevation**: Higher elevations have reduced growth rates.
-  - **Soil Type**: Different soil types (e.g., sandy, rocky) affect growth.
-  - **Tree Age**: Maturation effects can slow growth in older trees.
+- White pine
+- Eastern hemlock (shown as Hemlock)
+- Yellow birch
+- Red spruce
+- Northern red oak (shown as Red oak)
+- Sugar maple
+- Balsam fir
+- White ash
+- American beech
+- Red maple
 
-## Requirements
-- Python 3.x
+Common variants and scientific names are accepted without regard to capitalization. For example, `eastern white pine`, `White Pine`, and `Pinus strobus` resolve to the same species.
 
-## Supported Tree Species
-The program supports the following tree species, each with growth rate data specific to diameter classes:
+## Measure the tree
 
-- Red Spruce
-- Sugar Maple
-- Yellow Birch
-- American Beech
-- Eastern Hemlock
-- Eastern White Pine
-- Northern Red Oak
-- Balsam Fir
-- White Ash
-- Red Maple
+Measure trunk circumference at breast height: 1.4 m (4.5 ft) above the ground. Keep a flexible tape level and snug around the trunk. Record centimeters or inches. Multi-stemmed, forked, leaning, or unusually swollen trees require forestry-specific measurement conventions and may not be suitable for this estimator.
 
-## Measuring Tree Circumference
-To accurately calculate the tree’s age, measure the circumference of the tree trunk at "breast height," approximately 1.4 meters (4.5 feet) above the ground:
-1. **Select a Spot**: Measure 1.4 meters up from the base of the tree.
-2. **Wrap Measuring Tape**: Use a flexible measuring tape to wrap around the tree at this height, keeping it straight and snug.
-3. **Record Circumference**: Take note of the circumference in centimeters, as this is the input required for the program.
+## Install and run
 
-## Installation
-Clone this repository and navigate to the directory where the `tree_age_calculator.py` file is located.
+Python 3.10 or newer is required.
 
 ```bash
-git clone https://github.com/dnrohr/tree_age_calculator.git
-cd tree_age_calculator
+python -m pip install -e .
+tree-age "Red Spruce" 100
 ```
 
-## Usage
-The program can be run from the command line with required and optional arguments.
+The repository's compatibility script also works without installation:
 
-### Required Arguments
-1. `species` - The species of the tree (e.g., `"Red Spruce"`).
-2. `circumference_cm` - The circumference of the tree in centimeters.
-
-### Optional Arguments
-- `--winter_temp` - Average winter temperature in degrees Celsius (default: -2°C).
-- `--summer_temp` - Average summer temperature in degrees Celsius (default: 21°C).
-- `--elevation` - Elevation in meters (default: 56m).
-- `--soil_type` - Soil type around the tree (`loamy`, `sandy`, or `rocky`; default: `loamy`).
-- `--tree_age` - Known or estimated age of the tree (if available), affecting growth rate adjustment.
-
-### Example Commands
-To calculate tree age with default environmental factors:
 ```bash
-python tree_age_calculator.py "Red Spruce" 100
+python tree_age_calculator.py "red spruce" 100
+python tree_age_calculator.py "Acer rubrum" 40 --units in --context yard --json
 ```
 
-To specify environmental factors explicitly:
-```bash
-python tree_age_calculator.py "Red Spruce" 100 --winter_temp -5 --summer_temp 18 --elevation 700 --soil_type sandy --tree_age 60
-```
+Example output:
 
-### Help Command
-To view help and usage information:
-```bash
-python tree_age_calculator.py --help
-```
-
-## Example Output
 ```text
-The estimated age of the Red Spruce tree is approximately 85 years.
+Species: Red spruce
+Estimated age: about 102 years
+Plausible range: 61-163 years
+Confidence: very rough
+Estimator: bai_reference_v1
+Warning: This is a rough estimate from a regional-average BAI model, not a measured age.
+Warning: The model does not account for competition, disease, soil, climate, or tree-specific growth history.
 ```
 
-## How the Program Works
-1. **Input Parsing**: The program uses `argparse` to parse input arguments.
-2. **Growth Rate Calculation**: It assigns a basal area increment (BAI) growth rate based on species and diameter class (small, medium, large).
-3. **Environmental Adjustments**: Adjusts growth rate based on:
-   - **Temperature**: Warmer winters and cooler summers tend to increase growth, while extreme cold or heat may reduce it.
-   - **Elevation**: Higher elevations introduce more environmental stress, reducing growth.
-   - **Soil Type**: Loamy soil is ideal for growth, while sandy or rocky soils slightly reduce it.
-4. **Age Calculation**: Calculates tree age using the adjusted growth rate to provide an estimate.
+Use `--context forest|yard|street|unknown` to identify the growing setting, `--state` to retain location context, and `--json` for structured output. The current model does not adjust its estimate by state or context; it adds a warning for open-grown yard and street trees.
 
-## References
-Smith, R. B., Hornbeck, J. W., Federer, C. A., & Krusic, P. J. (1990). *Regionally Averaged Diameter Growth in New England Forests*. USDA Forest Service, Northeastern Forest Experiment Station. Research Paper NE-637.
+## Model and limitations
+
+The experimental BAI model is based on the species-level reference values reported in *Regionally Averaged Diameter Growth in New England Forests* (Smith, Hornbeck, Federer, and Krusic, USDA Forest Service Research Paper NE-637, 1990). It bounds the paper's 1950-1980 growth curve outside that period and integrates annual basal-area growth backward from the present.
+
+The broad interval is deliberately conservative, but it is a heuristic interval rather than a statistically calibrated confidence interval. The model is primarily forest-derived, limited to New England species, and does not model temperature, elevation, soil, suppression, release, management, or tree health.
+
+## Development
+
+```bash
+python -m pip install -e .
+python -m unittest discover -s tests -v
+```
+
+The implementation roadmap is in [ROADMAP.md](ROADMAP.md). The next milestones introduce a common estimator registry, a conservative growth-factor fallback, and a reproducible USDA FIA data pipeline before fitting a calibrated age-size model.
+
+## License
+
+GPL-3.0-or-later. See [LICENSE](LICENSE).
