@@ -13,6 +13,18 @@ python -m pip install -e .
 tree-age estimate --species "red maple" --circumference 100 --units cm --state MA --context yard
 ```
 
+On Windows, pip may install command launchers into a version-specific `Scripts` directory that is not on PATH. The project installer adds the correct directory to your user PATH without hard-coding a Python version:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1
+```
+
+Open a new terminal afterward. The CLI also always works without a PATH entry:
+
+```bash
+python -m tree_age estimate --species "red maple" --circumference 100
+```
+
 Example output:
 
 ```text

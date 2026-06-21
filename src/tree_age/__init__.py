@@ -16,4 +16,4 @@ __all__ = [
     "TreeMeasurement",
     "get_estimator",
 ]
-__version__ = "1.1.0"
+__version__ = "1.1.1"
