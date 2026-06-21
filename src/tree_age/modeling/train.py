@@ -28,7 +28,36 @@ def _predict(intercept: float, slope: float, dbh_cm: float, state_offset: float 
     return math.exp(intercept + state_offset + slope * math.log(dbh_cm))
 
 
-def train_model(input_path: Path, model_path: Path, report_path: Path, min_records: int = 20) -> dict[str, object]:
+def _dbh_class(dbh_cm: float) -> str:
+    if dbh_cm < 20:
+        return "lt20"
+    if dbh_cm < 40:
+        return "20to39"
+    if dbh_cm < 60:
+        return "40to59"
+    return "ge60"
+
+
+def _quantile(values: list[float], probability: float) -> float:
+    ordered = sorted(values)
+    position = (len(ordered) - 1) * probability
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return ordered[lower]
+    fraction = position - lower
+    return ordered[lower] * (1 - fraction) + ordered[upper] * fraction
+
+
+def _interval_entry(residuals: list[float]) -> dict[str, object]:
+    return {
+        "lower_residual_years": round(_quantile(residuals, 0.05), 3),
+        "upper_residual_years": round(_quantile(residuals, 0.95), 3),
+        "records": len(residuals),
+    }
+
+
+def train_model(input_path: Path, model_path: Path, report_path: Path, min_records: int = 50) -> dict[str, object]:
     grouped: dict[str, list[dict[str, object]]] = defaultdict(list)
     target_counts: dict[str, int] = defaultdict(int)
     with input_path.open(encoding="utf-8", newline="") as handle:
@@ -44,14 +73,16 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
 
     species_models: dict[str, object] = {}
     evaluations = []
+    calibrations = []
     growth_factor_errors = []
     growth_factors = load_growth_factors()
     for species, rows in sorted(grouped.items()):
         if len(rows) < min_records:
             continue
-        training = [row for index, row in enumerate(rows) if index % 5 != 0]
+        training = [row for index, row in enumerate(rows) if index % 5 in {2, 3, 4}]
+        calibration = [row for index, row in enumerate(rows) if index % 5 == 1]
         validation = [row for index, row in enumerate(rows) if index % 5 == 0]
-        if len(training) < min_records:
+        if len(training) < max(10, min_records // 2):
             continue
         intercept, slope = _fit_log_linear(training)
         residuals_by_state: dict[str, list[float]] = defaultdict(list)
@@ -66,6 +97,20 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
             if len(residuals) >= 20
         }
         errors = []
+        for row in calibration:
+            prediction = _predict(
+                intercept,
+                slope,
+                float(row["dbh_cm"]),
+                state_offsets.get(row["state"], 0.0),
+            )
+            calibrations.append(
+                (
+                    species,
+                    _dbh_class(float(row["dbh_cm"])),
+                    float(row["age_years"]) - prediction,
+                )
+            )
         for row in validation:
             prediction = _predict(
                 intercept,
@@ -74,7 +119,15 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
                 state_offsets.get(row["state"], 0.0),
             )
             errors.append(prediction - float(row["age_years"]))
-            evaluations.append((species, row["state"], prediction, float(row["age_years"])))
+            evaluations.append(
+                (
+                    species,
+                    row["state"],
+                    _dbh_class(float(row["dbh_cm"])),
+                    prediction,
+                    float(row["age_years"]),
+                )
+            )
             growth_prediction = float(row["dbh_cm"]) / 2.54 * growth_factors[species]
             growth_factor_errors.append(abs(growth_prediction - float(row["age_years"])))
         species_models[species] = {
@@ -82,19 +135,55 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
             "log_dbh_slope": round(slope, 8),
             "state_offsets": {key: round(value, 8) for key, value in sorted(state_offsets.items())},
             "training_records": len(training),
+            "calibration_records": len(calibration),
             "validation_records": len(validation),
             "validation_mae_years": round(sum(abs(value) for value in errors) / len(errors), 3),
         }
 
     if not species_models:
         raise ValueError("No species had enough medium/high-quality age records to train")
-    absolute_errors = [abs(predicted - observed) for _, _, predicted, observed in evaluations]
-    squared_errors = [(predicted - observed) ** 2 for _, _, predicted, observed in evaluations]
+    residuals_by_species = defaultdict(list)
+    residuals_by_species_class = defaultdict(list)
+    all_residuals = []
+    for species, dbh_class, residual in calibrations:
+        residuals_by_species[species].append(residual)
+        residuals_by_species_class[(species, dbh_class)].append(residual)
+        all_residuals.append(residual)
+    interval_model = {
+        "method": "conservative calibration residual 5th/95th percentiles",
+        "nominal_coverage": 0.8,
+        "fallback_order": ["species_dbh_class", "species", "global"],
+        "global": _interval_entry(all_residuals),
+        "species": {
+            species: _interval_entry(values)
+            for species, values in sorted(residuals_by_species.items())
+            if len(values) >= 10
+        },
+        "species_dbh_class": {
+            f"{species}|{dbh_class}": _interval_entry(values)
+            for (species, dbh_class), values in sorted(residuals_by_species_class.items())
+            if len(values) >= 10
+        },
+    }
+    absolute_errors = [abs(predicted - observed) for _, _, _, predicted, observed in evaluations]
+    squared_errors = [(predicted - observed) ** 2 for _, _, _, predicted, observed in evaluations]
     by_species = defaultdict(list)
     by_state = defaultdict(list)
-    for species, state, predicted, observed in evaluations:
+    covered = []
+    coverage_by_species = defaultdict(list)
+    interval_widths = []
+    for species, state, dbh_class, predicted, observed in evaluations:
         by_species[species].append(abs(predicted - observed))
         by_state[state].append(abs(predicted - observed))
+        entry = interval_model["species_dbh_class"].get(
+            f"{species}|{dbh_class}", interval_model["species"].get(species, interval_model["global"])
+        )
+        lower = max(1.0, predicted + entry["lower_residual_years"])
+        upper = predicted + entry["upper_residual_years"]
+        is_covered = lower <= observed <= upper
+        covered.append(is_covered)
+        coverage_by_species[species].append(is_covered)
+        interval_widths.append(max(0.0, upper - lower))
     metadata = {
         "model_name": "fia_age_size_v1",
         "model_version": "1.0.0",
@@ -103,18 +192,25 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
         "target_types": dict(sorted(target_counts.items())),
         "formula": "log(age) = species_intercept + species_slope * log(DBH_cm) + state_offset",
         "minimum_records_per_species": min_records,
-        "states": sorted({state for _, state, _, _ in evaluations}),
+        "states": sorted({state for _, state, _, _, _ in evaluations}),
     }
-    model = {"metadata": metadata, "species_models": species_models}
+    model = {"metadata": metadata, "species_models": species_models, "interval_model": interval_model}
     report = {
         "metadata": metadata,
         "training_records": sum(item["training_records"] for item in species_models.values()),
+        "calibration_records": len(calibrations),
         "validation_records": len(evaluations),
         "mae_years": round(sum(absolute_errors) / len(absolute_errors), 3),
         "growth_factor_baseline_mae_years": round(
             sum(growth_factor_errors) / len(growth_factor_errors), 3
         ),
         "rmse_years": round(math.sqrt(sum(squared_errors) / len(squared_errors)), 3),
+        "interval_80_coverage": round(sum(covered) / len(covered), 4),
+        "mean_interval_width_years": round(sum(interval_widths) / len(interval_widths), 3),
+        "interval_80_coverage_by_species": {
+            key: round(sum(values) / len(values), 4)
+            for key, values in sorted(coverage_by_species.items())
+        },
         "mae_by_species": {key: round(sum(values) / len(values), 3) for key, values in sorted(by_species.items())},
         "mae_by_state": {key: round(sum(values) / len(values), 3) for key, values in sorted(by_state.items())},
     }
@@ -130,7 +226,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("input", type=Path)
     parser.add_argument("--model", type=Path, default=Path("src/tree_age/data/fia_age_size_v1.json"))
     parser.add_argument("--report", type=Path, default=Path("docs/fia_age_size_v1_evaluation.json"))
-    parser.add_argument("--min-records", type=int, default=20)
+    parser.add_argument("--min-records", type=int, default=50)
     args = parser.parse_args(argv)
     report = train_model(args.input, args.model, args.report, args.min_records)
     print(json.dumps(report, indent=2))

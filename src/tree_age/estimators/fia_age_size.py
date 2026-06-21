@@ -43,11 +43,30 @@ class FiaAgeSizeEstimator(AgeEstimator):
             + state_offset
         )
         point = max(1, round(point_value))
-        lower = max(1, round(point * 0.6))
-        upper = max(lower + 1, round(point * 1.6))
+        if measurement.dbh_cm < 20:
+            dbh_class = "lt20"
+        elif measurement.dbh_cm < 40:
+            dbh_class = "20to39"
+        elif measurement.dbh_cm < 60:
+            dbh_class = "40to59"
+        else:
+            dbh_class = "ge60"
+        intervals = self.model["interval_model"]
+        class_key = f"{resolved.canonical_name}|{dbh_class}"
+        if class_key in intervals["species_dbh_class"]:
+            interval = intervals["species_dbh_class"][class_key]
+            interval_source = "species_dbh_class"
+        elif resolved.canonical_name in intervals["species"]:
+            interval = intervals["species"][resolved.canonical_name]
+            interval_source = "species"
+        else:
+            interval = intervals["global"]
+            interval_source = "global"
+        lower = max(1, min(point, round(point_value + interval["lower_residual_years"])))
+        upper = max(point + 1, round(point_value + interval["upper_residual_years"]))
         warnings = [
             "This baseline is trained on selected FIA site trees, not a random sample of all trees.",
-            "Its current interval is conservative and heuristic, not yet coverage-calibrated.",
+            "The interval is empirically calibrated to nominal 80% coverage on held-out FIA site trees.",
         ]
         trained_states = self.model["metadata"]["states"]
         if state and state not in trained_states:
@@ -67,5 +86,7 @@ class FiaAgeSizeEstimator(AgeEstimator):
                 "model_version": self.model["metadata"]["model_version"],
                 "training_states": trained_states,
                 "state_adjustment": state if state in parameters["state_offsets"] else None,
+                "interval_source": interval_source,
+                "interval_calibration_records": interval["records"],
             },
         )

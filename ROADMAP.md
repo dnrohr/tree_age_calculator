@@ -7,7 +7,7 @@
 - [x] Milestone 3 - Conservative growth-factor fallback: packaged reference table, wide intervals, and context warnings.
 - [x] Milestone 4 - FIA data pipeline: reproducible New England downloads, provenance manifests, normalized extraction, target-quality tracking, and quality reports.
 - [x] Milestone 5 - FIA age-size model v1: transparent species log-age/log-DBH baseline, state offsets, held-out evaluation, serialization, and CLI integration.
-- [ ] Milestone 6 - Uncertainty model v1.
+- [x] Milestone 6 - Uncertainty model v1: held-out residual quantiles, species/DBH fallback hierarchy, and coverage reporting.
 - [ ] Milestone 7 - Model card and final documentation.
 
 ## Purpose

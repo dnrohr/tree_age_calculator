@@ -62,7 +62,7 @@ Use `--estimator` to select a registered algorithm, `--context forest|yard|stree
 
 `bai_reference` is based on the species-level reference values reported in *Regionally Averaged Diameter Growth in New England Forests* (Smith, Hornbeck, Federer, and Krusic, USDA Forest Service Research Paper NE-637, 1990). It bounds the paper's 1950-1980 growth curve outside that period and integrates annual basal-area growth backward from the present.
 
-`fia_age_size` is a transparent log-age/log-DBH baseline trained on selected FIA site trees from Connecticut and Massachusetts. It supports eight species and applies a state offset when trained data are available. See the [model card](docs/FIA_AGE_SIZE_V1_MODEL_CARD.md) and [evaluation report](docs/fia_age_size_v1_evaluation.json).
+`fia_age_size` is a transparent log-age/log-DBH baseline trained on selected FIA site trees from Connecticut and Massachusetts. It supports six well-sampled species and applies a state offset when trained data are available. See the [model card](docs/FIA_AGE_SIZE_V1_MODEL_CARD.md) and [evaluation report](docs/fia_age_size_v1_evaluation.json).
 
 The broad interval is deliberately conservative, but it is a heuristic interval rather than a statistically calibrated confidence interval. The model is primarily forest-derived, limited to New England species, and does not model temperature, elevation, soil, suppression, release, management, or tree health.
 

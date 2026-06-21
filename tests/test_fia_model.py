@@ -14,6 +14,7 @@ class FiaModelTests(unittest.TestCase):
         self.assertEqual(result.estimator_name, "fia_age_size_v1")
         self.assertLess(result.lower_age_years, result.estimated_age_years)
         self.assertGreater(result.upper_age_years, result.estimated_age_years)
+        self.assertIn(result.assumptions["interval_source"], {"species_dbh_class", "species", "global"})
 
     def test_unsupported_species_fails_cleanly(self):
         with self.assertRaisesRegex(ModelError, "does not support"):
@@ -24,6 +25,11 @@ class FiaModelTests(unittest.TestCase):
             "red maple", TreeMeasurement(100), SiteContext(state="NY")
         )
         self.assertTrue(any("not represented" in warning for warning in result.warnings))
+
+    def test_interval_model_is_empirical_and_conservative(self):
+        estimator = FiaAgeSizeEstimator()
+        self.assertEqual(estimator.model["interval_model"]["nominal_coverage"], 0.8)
+        self.assertGreaterEqual(estimator.model["interval_model"]["global"]["records"], 10)
 
 
 if __name__ == "__main__":

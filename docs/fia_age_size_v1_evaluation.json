@@ -8,29 +8,38 @@
       "site_tree_age": 2708
     },
     "formula": "log(age) = species_intercept + species_slope * log(DBH_cm) + state_offset",
-    "minimum_records_per_species": 20,
+    "minimum_records_per_species": 50,
     "states": [
       "CT",
       "MA"
     ]
   },
-  "training_records": 2157,
-  "validation_records": 544,
-  "mae_years": 11.828,
-  "growth_factor_baseline_mae_years": 14.169,
-  "rmse_years": 15.268,
+  "training_records": 1577,
+  "calibration_records": 528,
+  "validation_records": 530,
+  "mae_years": 11.808,
+  "growth_factor_baseline_mae_years": 14.124,
+  "rmse_years": 15.141,
+  "interval_80_coverage": 0.8604,
+  "mean_interval_width_years": 44.725,
+  "interval_80_coverage_by_species": {
+    "Hemlock": 0.7632,
+    "Red maple": 0.8421,
+    "Red oak": 0.8973,
+    "Sugar maple": 0.7692,
+    "White ash": 0.875,
+    "White pine": 0.8732
+  },
   "mae_by_species": {
-    "Hemlock": 15.892,
-    "Red maple": 9.911,
-    "Red oak": 11.437,
-    "Red spruce": 24.355,
-    "Sugar maple": 10.122,
-    "White ash": 14.226,
-    "White pine": 11.736,
-    "Yellow birch": 5.591
+    "Hemlock": 16.696,
+    "Red maple": 10.05,
+    "Red oak": 11.35,
+    "Sugar maple": 10.305,
+    "White ash": 13.982,
+    "White pine": 11.68
   },
   "mae_by_state": {
-    "CT": 12.231,
-    "MA": 11.63
+    "CT": 12.3,
+    "MA": 11.562
   }
 }

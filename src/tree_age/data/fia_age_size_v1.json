@@ -8,7 +8,7 @@
       "site_tree_age": 2708
     },
     "formula": "log(age) = species_intercept + species_slope * log(DBH_cm) + state_offset",
-    "minimum_records_per_species": 20,
+    "minimum_records_per_species": 50,
     "states": [
       "CT",
       "MA"
@@ -16,90 +16,174 @@
   },
   "species_models": {
     "Hemlock": {
-      "intercept": 1.84973997,
-      "log_dbh_slope": 0.70125051,
+      "intercept": 1.30788032,
+      "log_dbh_slope": 0.86341199,
       "state_offsets": {
-        "CT": -0.19016789,
-        "MA": 0.07043255
+        "CT": -0.19582692,
+        "MA": 0.07252849
       },
-      "training_records": 148,
+      "training_records": 111,
+      "calibration_records": 37,
       "validation_records": 38,
-      "validation_mae_years": 15.892
+      "validation_mae_years": 16.696
     },
     "Red maple": {
-      "intercept": 0.7095957,
-      "log_dbh_slope": 0.98821215,
+      "intercept": 0.75583268,
+      "log_dbh_slope": 0.97196957,
       "state_offsets": {
-        "CT": -0.00639461,
-        "MA": 0.00374702
+        "CT": 0.00126835,
+        "MA": -0.00074086
       },
-      "training_records": 452,
+      "training_records": 339,
+      "calibration_records": 113,
       "validation_records": 114,
-      "validation_mae_years": 9.911
+      "validation_mae_years": 10.05
     },
     "Red oak": {
-      "intercept": 1.30712461,
-      "log_dbh_slope": 0.82165815,
+      "intercept": 1.37131845,
+      "log_dbh_slope": 0.80183272,
       "state_offsets": {
-        "CT": 0.04673311,
-        "MA": -0.0445376
+        "CT": 0.03457297,
+        "MA": -0.03302261
       },
-      "training_records": 582,
+      "training_records": 436,
+      "calibration_records": 146,
       "validation_records": 146,
-      "validation_mae_years": 11.437
-    },
-    "Red spruce": {
-      "intercept": 0.03033263,
-      "log_dbh_slope": 1.20589372,
-      "state_offsets": {
-        "MA": 0.0
-      },
-      "training_records": 24,
-      "validation_records": 6,
-      "validation_mae_years": 24.355
+      "validation_mae_years": 11.35
     },
     "Sugar maple": {
-      "intercept": 0.30199826,
-      "log_dbh_slope": 1.12417782,
+      "intercept": 0.10853226,
+      "log_dbh_slope": 1.17178468,
       "state_offsets": {
-        "CT": 0.01559851,
-        "MA": -0.01231462
+        "CT": 0.0100306,
+        "MA": -0.0076979
       },
-      "training_records": 102,
+      "training_records": 76,
+      "calibration_records": 26,
       "validation_records": 26,
-      "validation_mae_years": 10.122
+      "validation_mae_years": 10.305
     },
     "White ash": {
-      "intercept": 0.98191422,
-      "log_dbh_slope": 0.89415777,
+      "intercept": 1.21025283,
+      "log_dbh_slope": 0.82760055,
       "state_offsets": {
-        "CT": 0.00542398,
-        "MA": -0.00342935
+        "CT": 0.01727631,
+        "MA": -0.01087216
       },
-      "training_records": 253,
+      "training_records": 189,
+      "calibration_records": 64,
       "validation_records": 64,
-      "validation_mae_years": 14.226
+      "validation_mae_years": 13.982
     },
     "White pine": {
-      "intercept": 1.05595624,
-      "log_dbh_slope": 0.84739841,
+      "intercept": 1.11244007,
+      "log_dbh_slope": 0.83239611,
       "state_offsets": {
-        "CT": -0.0137994,
-        "MA": 0.00166028
+        "CT": 0.01946974,
+        "MA": -0.00229958
       },
-      "training_records": 568,
+      "training_records": 426,
+      "calibration_records": 142,
       "validation_records": 142,
-      "validation_mae_years": 11.736
+      "validation_mae_years": 11.68
+    }
+  },
+  "interval_model": {
+    "method": "conservative calibration residual 5th/95th percentiles",
+    "nominal_coverage": 0.8,
+    "fallback_order": [
+      "species_dbh_class",
+      "species",
+      "global"
+    ],
+    "global": {
+      "lower_residual_years": -20.717,
+      "upper_residual_years": 26.939,
+      "records": 528
     },
-    "Yellow birch": {
-      "intercept": 1.78241078,
-      "log_dbh_slope": 0.69522957,
-      "state_offsets": {
-        "MA": 8.905e-05
+    "species": {
+      "Hemlock": {
+        "lower_residual_years": -42.007,
+        "upper_residual_years": 22.98,
+        "records": 37
       },
-      "training_records": 28,
-      "validation_records": 8,
-      "validation_mae_years": 5.591
+      "Red maple": {
+        "lower_residual_years": -14.837,
+        "upper_residual_years": 22.852,
+        "records": 113
+      },
+      "Red oak": {
+        "lower_residual_years": -18.928,
+        "upper_residual_years": 26.034,
+        "records": 146
+      },
+      "Sugar maple": {
+        "lower_residual_years": -9.224,
+        "upper_residual_years": 35.432,
+        "records": 26
+      },
+      "White ash": {
+        "lower_residual_years": -20.717,
+        "upper_residual_years": 44.275,
+        "records": 64
+      },
+      "White pine": {
+        "lower_residual_years": -19.865,
+        "upper_residual_years": 22.306,
+        "records": 142
+      }
+    },
+    "species_dbh_class": {
+      "Hemlock|20to39": {
+        "lower_residual_years": -19.393,
+        "upper_residual_years": 23.238,
+        "records": 23
+      },
+      "Hemlock|40to59": {
+        "lower_residual_years": -46.014,
+        "upper_residual_years": 20.711,
+        "records": 13
+      },
+      "Red maple|20to39": {
+        "lower_residual_years": -15.663,
+        "upper_residual_years": 21.479,
+        "records": 87
+      },
+      "Red maple|lt20": {
+        "lower_residual_years": -14.539,
+        "upper_residual_years": 17.585,
+        "records": 24
+      },
+      "Red oak|20to39": {
+        "lower_residual_years": -19.657,
+        "upper_residual_years": 26.029,
+        "records": 108
+      },
+      "Red oak|40to59": {
+        "lower_residual_years": -18.154,
+        "upper_residual_years": 18.121,
+        "records": 28
+      },
+      "Sugar maple|20to39": {
+        "lower_residual_years": -5.908,
+        "upper_residual_years": 35.432,
+        "records": 18
+      },
+      "White ash|20to39": {
+        "lower_residual_years": -20.717,
+        "upper_residual_years": 45.157,
+        "records": 57
+      },
+      "White pine|20to39": {
+        "lower_residual_years": -20.052,
+        "upper_residual_years": 21.417,
+        "records": 100
+      },
+      "White pine|40to59": {
+        "lower_residual_years": -19.472,
+        "upper_residual_years": 25.2,
+        "records": 40
+      }
     }
   }
 }
