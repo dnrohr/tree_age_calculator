@@ -1,4 +1,5 @@
 import csv
+from contextlib import closing
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -20,20 +21,21 @@ class FiaCleanerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             database = root / "fixture.db"
-            with sqlite3.connect(database) as connection:
-                connection.executescript(SCHEMA)
-                connection.execute("INSERT INTO PLOT VALUES ('p1', 42.123, -72.987, 1000)")
-                connection.execute("INSERT INTO COND VALUES ('p1', 1, 50, 12, 180, 101, 0)")
-                connection.execute("INSERT INTO REF_SPECIES VALUES (316, 'Red maple', 'Acer rubrum')")
-                connection.executemany(
-                    "INSERT INTO TREE VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [
-                        (316, 10, 50, 80, 70, 9, 1, "p1", 1, 1, 2025),
-                        (316, 11, 55, None, 70, 9, 1, "p1", 1, 1, 2025),
-                        (316, 12, 60, None, None, 9, 1, "p1", 1, 1, 2025),
-                        (316, 0, 60, 20, None, 9, 1, "p1", 1, 1, 2025),
-                    ],
-                )
+            with closing(sqlite3.connect(database)) as connection:
+                with connection:
+                    connection.executescript(SCHEMA)
+                    connection.execute("INSERT INTO PLOT VALUES ('p1', 42.123, -72.987, 1000)")
+                    connection.execute("INSERT INTO COND VALUES ('p1', 1, 50, 12, 180, 101, 0)")
+                    connection.execute("INSERT INTO REF_SPECIES VALUES (316, 'Red maple', 'Acer rubrum')")
+                    connection.executemany(
+                        "INSERT INTO TREE VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        [
+                            (316, 10, 50, 80, 70, 9, 1, "p1", 1, 1, 2025),
+                            (316, 11, 55, None, 70, 9, 1, "p1", 1, 1, 2025),
+                            (316, 12, 60, None, None, 9, 1, "p1", 1, 1, 2025),
+                            (316, 0, 60, 20, None, 9, 1, "p1", 1, 1, 2025),
+                        ],
+                    )
             output = root / "clean.csv"
             report = clean_database(database, output)
             with output.open(encoding="utf-8", newline="") as handle:
