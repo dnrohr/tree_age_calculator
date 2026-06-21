@@ -1,6 +1,6 @@
 # Tree Age Estimator
 
-Tree Age Estimator gives a **rough, plausible age range** for a living tree from its species and circumference at breast height. It currently uses an experimental regional-average basal-area-increment (BAI) reference model for ten New England species.
+Tree Age Estimator gives a **rough, plausible age range** for a living tree from its species and circumference at breast height. It includes an experimental regional-average basal-area-increment (BAI) reference model and a conservative growth-factor fallback for ten New England species.
 
 Circumference alone cannot reveal a tree's exact age. Competition, climate, disease, soil, damage, and growing context can produce very different ages at the same trunk size. Results are estimates, not planting dates or substitutes for increment-core measurements.
 
@@ -38,6 +38,7 @@ The repository's compatibility script also works without installation:
 python tree_age_calculator.py "red spruce" 100
 python tree_age_calculator.py "Acer rubrum" 40 --units in --context yard --json
 python tree_age_calculator.py "red maple" 100 --estimator bai_reference
+python tree_age_calculator.py "red maple" 100 --estimator growth_factor
 ```
 
 Example output:
@@ -56,7 +57,9 @@ Use `--estimator` to select a registered algorithm, `--context forest|yard|stree
 
 ## Model and limitations
 
-The experimental BAI model is based on the species-level reference values reported in *Regionally Averaged Diameter Growth in New England Forests* (Smith, Hornbeck, Federer, and Krusic, USDA Forest Service Research Paper NE-637, 1990). It bounds the paper's 1950-1980 growth curve outside that period and integrates annual basal-area growth backward from the present.
+`growth_factor` multiplies DBH in inches by a species reference factor. It is stable and easy to interpret, but is only a horticultural rule of thumb; its interval is intentionally broad.
+
+`bai_reference` is based on the species-level reference values reported in *Regionally Averaged Diameter Growth in New England Forests* (Smith, Hornbeck, Federer, and Krusic, USDA Forest Service Research Paper NE-637, 1990). It bounds the paper's 1950-1980 growth curve outside that period and integrates annual basal-area growth backward from the present.
 
 The broad interval is deliberately conservative, but it is a heuristic interval rather than a statistically calibrated confidence interval. The model is primarily forest-derived, limited to New England species, and does not model temperature, elevation, soil, suppression, release, management, or tree health.
 
