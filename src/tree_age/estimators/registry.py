@@ -6,6 +6,7 @@ from .bai_reference import BaiReferenceEstimator
 from .growth_factor import GrowthFactorEstimator
 from .fia_age_size import FiaAgeSizeEstimator
 from .ensemble import EnsembleEstimator
+from .urban_sugar_maple import UrbanSugarMapleEstimator
 
 EstimatorFactory = Callable[[], AgeEstimator]
 
@@ -14,6 +15,7 @@ ESTIMATORS: dict[str, EstimatorFactory] = {
     "growth_factor": GrowthFactorEstimator,
     "fia_age_size": FiaAgeSizeEstimator,
     "ensemble": EnsembleEstimator,
+    "urban_sugar_maple": UrbanSugarMapleEstimator,
 }
 
 

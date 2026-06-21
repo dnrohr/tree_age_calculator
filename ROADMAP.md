@@ -9,6 +9,7 @@
 - [x] Milestone 5 - FIA age-size model v1: transparent species log-age/log-DBH baseline, state offsets, held-out evaluation, serialization, and CLI integration.
 - [x] Milestone 6 - Uncertainty model v1: held-out residual quantiles, species/DBH fallback hierarchy, and coverage reporting.
 - [x] Milestone 7 - Model card and final documentation: v1 provenance, validation metrics, CLI metadata, benchmark tests, and explicit limitations.
+- [x] Post-v1 - Northeast urban sugar-maple model: published USDA coefficients, reproducible source verification, context-aware routing, and separate model card.
 
 ## Purpose
 

@@ -4,16 +4,18 @@ import sys
 
 from .errors import TreeAgeError
 from .estimators.fia_age_size import FiaAgeSizeEstimator
+from .estimators.urban_sugar_maple import UrbanSugarMapleEstimator
 from .estimators.registry import ESTIMATORS, get_estimator
 from .measurements import TreeMeasurement
 from .result import SiteContext
 from .species import SPECIES
 
 ESTIMATOR_DESCRIPTIONS = {
-    "ensemble": "Default: FIA age-size model with an explicit growth-factor fallback.",
+    "ensemble": "Default: context-aware urban/FIA routing with an explicit growth-factor fallback.",
     "fia_age_size": "Empirical CT/MA FIA site-tree log-age/log-DBH model.",
     "growth_factor": "Stable but crude species growth-factor rule of thumb.",
     "bai_reference": "Experimental New England regional-average BAI reference model.",
+    "urban_sugar_maple": "Published Northeast urban sugar-maple DBH-to-age equation.",
 }
 
 
@@ -99,6 +101,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{args.estimator}: {ESTIMATOR_DESCRIPTIONS[args.estimator]}")
         if args.estimator in {"fia_age_size", "ensemble"}:
             print(json.dumps(FiaAgeSizeEstimator().model["metadata"], indent=2))
+        if args.estimator == "urban_sugar_maple":
+            print(json.dumps(UrbanSugarMapleEstimator().metadata, indent=2))
         return 0
     if args.command == "model":
         result = _check_model()

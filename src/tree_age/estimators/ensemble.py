@@ -4,6 +4,8 @@ from ..result import AgeEstimate, SiteContext
 from .base import AgeEstimator
 from .fia_age_size import FiaAgeSizeEstimator
 from .growth_factor import GrowthFactorEstimator
+from .urban_sugar_maple import UrbanSugarMapleEstimator
+from ..species import resolve_species
 
 
 class EnsembleEstimator(AgeEstimator):
@@ -14,6 +16,7 @@ class EnsembleEstimator(AgeEstimator):
     def __init__(self) -> None:
         self.primary = FiaAgeSizeEstimator()
         self.fallback = GrowthFactorEstimator()
+        self.urban = UrbanSugarMapleEstimator()
 
     def estimate(
         self,
@@ -21,6 +24,13 @@ class EnsembleEstimator(AgeEstimator):
         measurement: TreeMeasurement,
         site: SiteContext | None = None,
     ) -> AgeEstimate:
+        resolved = resolve_species(species)
+        if (
+            resolved.canonical_name == "Sugar maple"
+            and site is not None
+            and site.context in {"yard", "street"}
+        ):
+            return self.urban.estimate(species, measurement, site)
         try:
             return self.primary.estimate(species, measurement, site)
         except ModelError:

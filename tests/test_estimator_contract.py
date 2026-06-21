@@ -10,7 +10,8 @@ class EstimatorContractTests(unittest.TestCase):
         for name in ESTIMATORS:
             estimator = get_estimator(name)
             self.assertIsInstance(estimator, AgeEstimator)
-            result = estimator.estimate("red maple", TreeMeasurement(100))
+            species = "sugar maple" if name == "urban_sugar_maple" else "red maple"
+            result = estimator.estimate(species, TreeMeasurement(100))
             self.assertIsInstance(result, AgeEstimate)
 
 

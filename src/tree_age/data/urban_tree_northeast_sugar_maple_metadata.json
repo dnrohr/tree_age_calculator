@@ -1,0 +1,21 @@
+{
+  "dataset": "Urban Tree Database",
+  "dataset_version": "Updated 21 January 2020",
+  "authors": ["E. Gregory McPherson", "Natalie S. van Doorn", "Paula J. Peper"],
+  "publisher": "USDA Forest Service Research Data Archive",
+  "doi": "10.2737/RDS-2016-0005",
+  "catalog_url": "https://www.fs.usda.gov/rds/archive/Catalog/RDS-2016-0005",
+  "source_archive": "RDS-2016-0005.zip",
+  "source_archive_sha256": "c0c888e2531ca58b673b7c18a30a01cbd33e90bd8b041fb3483e394bd8664faf",
+  "coefficient_source_file": "Data/TS6_Growth_coefficients.csv",
+  "raw_tree_source_file": "Data/TS3_Raw_tree_data.csv",
+  "source_region": "NoEast",
+  "source_city": "Queens, NY",
+  "prepared": "2026-06-21",
+  "notes": [
+    "Age is defined by the source as years since planted.",
+    "The Northeast sugar-maple DBH-to-age equation has n=16.",
+    "The regional raw sample contains 31 sugar maples with DBH from 2.5 to 105.7 cm, but its raw age values are missing sentinels; use the published coefficient row for age estimation.",
+    "This urban model must remain separate from the forest-derived FIA model."
+  ]
+}

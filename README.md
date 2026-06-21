@@ -53,12 +53,13 @@ tree-age species list
 
 Ten New England species are recognized: white pine, eastern hemlock, yellow birch, red spruce, northern red oak, sugar maple, balsam fir, white ash, American beech, and red maple. Common variants and scientific names are case-insensitive. Ambiguous groups such as `oak` are rejected rather than silently resolved.
 
-The default `ensemble` uses `fia_age_size` when the species is supported and otherwise reports an explicit `growth_factor` fallback. Algorithms can also be selected directly:
+The default `ensemble` uses the Northeast urban model for yard/street sugar maples, the FIA model for supported forest trees, and otherwise reports an explicit `growth_factor` fallback. Algorithms can also be selected directly:
 
 - `fia_age_size`: transparent CT/MA FIA site-tree log-age/log-DBH model for six well-sampled species, with state effects and empirical residual intervals.
 - `growth_factor`: stable but crude horticultural rule of thumb for all ten species.
 - `bai_reference`: experimental New England regional-average BAI reference model.
-- `ensemble`: FIA model first, growth-factor fallback second.
+- `ensemble`: context-aware routing among the urban sugar-maple, FIA, and growth-factor models.
+- `urban_sugar_maple`: published Northeast urban DBH-to-years-since-planting equation for open-grown sugar maples.
 
 Inspect packaged metadata and coefficients:
 
@@ -75,13 +76,14 @@ Growth-factor and BAI intervals are broad heuristics, not statistically calibrat
 
 ## Forest, yard, and street context
 
-FIA data are forest-derived. `--context forest` is the closest match to the training domain. `yard`, `street`, and `unknown` add increasingly relevant warnings; no unvalidated multiplier is applied. Street-tree management and urban stress can counteract the faster growth often seen in open-grown trees.
+FIA data are forest-derived. `--context forest` is the closest match to the training domain. For sugar maple, `yard` and `street` select the separate USDA Northeast urban model; `unknown` retains the forest model with a warning. Street-tree management and urban stress can counteract the faster growth often seen in open-grown trees.
 
 ## Data, validation, and limitations
 
 The v1 empirical artifact uses selected FIA site trees from Connecticut and Massachusetts. Held-out MAE is 11.808 years versus 14.124 years for the growth-factor fallback on the same records. It does not model tree health, competition, climate, height, elevation, soil, suppression, release, or management history.
 
 - [FIA age-size v1 model card](docs/FIA_AGE_SIZE_V1_MODEL_CARD.md)
+- [Northeast urban sugar-maple model card](docs/URBAN_SUGAR_MAPLE_MODEL_CARD.md)
 - [Machine-readable evaluation report](docs/fia_age_size_v1_evaluation.json)
 - [FIA download, cleaning, and quality workflow](docs/FIA_DATA_PIPELINE.md)
 - [Development roadmap](ROADMAP.md)

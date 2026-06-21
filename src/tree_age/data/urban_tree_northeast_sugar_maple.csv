@@ -1,0 +1,2 @@
+region,scientific_name,species_code,independent_variable,predicted_component,equation_name,intercept,coefficient,mse,sigma,n,adjusted_r2,application_age_min_years,application_age_max_years,regional_raw_dbh_min_cm,regional_raw_dbh_max_cm
+NoEast,Acer saccharum,ACSA2,dbh,age,loglogw1,-0.54715,3.22652,0.0706,0.2657,16,0.91,0,121,2.5,105.7

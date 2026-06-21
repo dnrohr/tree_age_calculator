@@ -51,6 +51,13 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn('"ok": true', output.getvalue())
 
+    def test_explain_urban_model_shows_source_metadata(self):
+        output = StringIO()
+        with contextlib.redirect_stdout(output):
+            code = main(["explain", "--estimator", "urban_sugar_maple"])
+        self.assertEqual(code, 0)
+        self.assertIn("10.2737/RDS-2016-0005", output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()
