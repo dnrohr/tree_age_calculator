@@ -138,6 +138,8 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
             "calibration_records": len(calibration),
             "validation_records": len(validation),
             "validation_mae_years": round(sum(abs(value) for value in errors) / len(errors), 3),
+            "training_dbh_min_cm": round(min(float(row["dbh_cm"]) for row in training), 3),
+            "training_dbh_max_cm": round(max(float(row["dbh_cm"]) for row in training), 3),
         }
 
     if not species_models:
@@ -189,6 +191,8 @@ def train_model(input_path: Path, model_path: Path, report_path: Path, min_recor
         "model_version": "1.0.0",
         "created": date.today().isoformat(),
         "training_data": input_path.name,
+        "training_data_source": "USDA Forest Service FIA DataMart state SQLite databases",
+        "training_data_prepared": date.today().isoformat(),
         "target_types": dict(sorted(target_counts.items())),
         "formula": "log(age) = species_intercept + species_slope * log(DBH_cm) + state_offset",
         "minimum_records_per_species": min_records,

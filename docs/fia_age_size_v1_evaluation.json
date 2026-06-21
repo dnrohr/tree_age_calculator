@@ -4,6 +4,8 @@
     "model_version": "1.0.0",
     "created": "2026-06-20",
     "training_data": "fia_new_england_clean.csv",
+    "training_data_source": "USDA Forest Service FIA DataMart state SQLite databases",
+    "training_data_prepared": "2026-06-20",
     "target_types": {
       "site_tree_age": 2708
     },

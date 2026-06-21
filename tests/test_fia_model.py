@@ -1,4 +1,5 @@
 import unittest
+import math
 
 from tree_age.errors import ModelError
 from tree_age.estimators.fia_age_size import FiaAgeSizeEstimator
@@ -30,6 +31,18 @@ class FiaModelTests(unittest.TestCase):
         estimator = FiaAgeSizeEstimator()
         self.assertEqual(estimator.model["interval_model"]["nominal_coverage"], 0.8)
         self.assertGreaterEqual(estimator.model["interval_model"]["global"]["records"], 10)
+
+    def test_age_is_monotonic_and_extrapolation_widens_interval(self):
+        estimator = FiaAgeSizeEstimator()
+        small = estimator.estimate("red maple", TreeMeasurement(20 * math.pi))
+        typical = estimator.estimate("red maple", TreeMeasurement(35 * math.pi))
+        huge = estimator.estimate("red maple", TreeMeasurement(100 * math.pi))
+        self.assertLess(small.estimated_age_years, typical.estimated_age_years)
+        self.assertLess(typical.estimated_age_years, huge.estimated_age_years)
+        self.assertGreater(
+            huge.upper_age_years - huge.lower_age_years,
+            typical.upper_age_years - typical.lower_age_years,
+        )
 
 
 if __name__ == "__main__":

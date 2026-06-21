@@ -4,6 +4,8 @@
     "model_version": "1.0.0",
     "created": "2026-06-20",
     "training_data": "fia_new_england_clean.csv",
+    "training_data_source": "USDA Forest Service FIA DataMart state SQLite databases",
+    "training_data_prepared": "2026-06-20",
     "target_types": {
       "site_tree_age": 2708
     },
@@ -25,7 +27,9 @@
       "training_records": 111,
       "calibration_records": 37,
       "validation_records": 38,
-      "validation_mae_years": 16.696
+      "validation_mae_years": 16.696,
+      "training_dbh_min_cm": 17.526,
+      "training_dbh_max_cm": 48.26
     },
     "Red maple": {
       "intercept": 0.75583268,
@@ -37,7 +41,9 @@
       "training_records": 339,
       "calibration_records": 113,
       "validation_records": 114,
-      "validation_mae_years": 10.05
+      "validation_mae_years": 10.05,
+      "training_dbh_min_cm": 12.7,
+      "training_dbh_max_cm": 58.42
     },
     "Red oak": {
       "intercept": 1.37131845,
@@ -49,7 +55,9 @@
       "training_records": 436,
       "calibration_records": 146,
       "validation_records": 146,
-      "validation_mae_years": 11.35
+      "validation_mae_years": 11.35,
+      "training_dbh_min_cm": 13.97,
+      "training_dbh_max_cm": 68.58
     },
     "Sugar maple": {
       "intercept": 0.10853226,
@@ -61,7 +69,9 @@
       "training_records": 76,
       "calibration_records": 26,
       "validation_records": 26,
-      "validation_mae_years": 10.305
+      "validation_mae_years": 10.305,
+      "training_dbh_min_cm": 18.288,
+      "training_dbh_max_cm": 43.18
     },
     "White ash": {
       "intercept": 1.21025283,
@@ -73,7 +83,9 @@
       "training_records": 189,
       "calibration_records": 64,
       "validation_records": 64,
-      "validation_mae_years": 13.982
+      "validation_mae_years": 13.982,
+      "training_dbh_min_cm": 13.208,
+      "training_dbh_max_cm": 62.738
     },
     "White pine": {
       "intercept": 1.11244007,
@@ -85,7 +97,9 @@
       "training_records": 426,
       "calibration_records": 142,
       "validation_records": 142,
-      "validation_mae_years": 11.68
+      "validation_mae_years": 11.68,
+      "training_dbh_min_cm": 14.224,
+      "training_dbh_max_cm": 66.802
     }
   },
   "interval_model": {

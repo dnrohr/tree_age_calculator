@@ -71,8 +71,22 @@ class FiaAgeSizeEstimator(AgeEstimator):
         trained_states = self.model["metadata"]["states"]
         if state and state not in trained_states:
             warnings.append(f"State {state} was not represented in training; no state adjustment was applied.")
+        if not state:
+            warnings.append("No state was provided; no regional adjustment was applied.")
+        if site is None or site.context == "unknown":
+            warnings.append("Growing context is unknown; the model is forest-derived.")
         if site and site.context in {"yard", "street"}:
             warnings.append("FIA is forest-derived; open-grown yard and street trees may be younger.")
+        if site and site.context == "street":
+            warnings.append("Street-tree stress and management are outside this model's training domain.")
+        dbh_outside_training = not (
+            parameters["training_dbh_min_cm"] <= measurement.dbh_cm <= parameters["training_dbh_max_cm"]
+        )
+        if dbh_outside_training:
+            half_width = max(point - lower, upper - point)
+            lower = max(1, point - round(half_width * 1.5))
+            upper = point + round(half_width * 1.5)
+            warnings.append("DBH is outside this species' training range; the interval was widened.")
         return AgeEstimate(
             species=resolved.canonical_name,
             dbh_cm=round(measurement.dbh_cm, 2),
@@ -88,5 +102,6 @@ class FiaAgeSizeEstimator(AgeEstimator):
                 "state_adjustment": state if state in parameters["state_offsets"] else None,
                 "interval_source": interval_source,
                 "interval_calibration_records": interval["records"],
+                "dbh_outside_training_range": dbh_outside_training,
             },
         )

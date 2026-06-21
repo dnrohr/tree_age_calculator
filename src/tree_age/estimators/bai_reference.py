@@ -98,6 +98,7 @@ class BaiReferenceEstimator(AgeEstimator):
             confidence_label="very rough",
             warnings=tuple(warnings),
             assumptions={
+                "model_version": "1.0.0",
                 "region": "New England",
                 "measurement": "circumference at breast height",
                 "max_age_years": self.max_age,

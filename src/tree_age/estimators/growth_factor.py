@@ -51,6 +51,7 @@ class GrowthFactorEstimator(AgeEstimator):
             confidence_label="very rough",
             warnings=tuple(warnings),
             assumptions={
+                "model_version": "1.0.0",
                 "formula": "DBH in inches multiplied by species growth factor",
                 "growth_factor": factor,
                 "measurement": "circumference at breast height",

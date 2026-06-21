@@ -8,7 +8,7 @@
 - [x] Milestone 4 - FIA data pipeline: reproducible New England downloads, provenance manifests, normalized extraction, target-quality tracking, and quality reports.
 - [x] Milestone 5 - FIA age-size model v1: transparent species log-age/log-DBH baseline, state offsets, held-out evaluation, serialization, and CLI integration.
 - [x] Milestone 6 - Uncertainty model v1: held-out residual quantiles, species/DBH fallback hierarchy, and coverage reporting.
-- [ ] Milestone 7 - Model card and final documentation.
+- [x] Milestone 7 - Model card and final documentation: v1 provenance, validation metrics, CLI metadata, benchmark tests, and explicit limitations.
 
 ## Purpose
 

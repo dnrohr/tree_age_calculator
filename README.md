@@ -1,81 +1,104 @@
 # Tree Age Estimator
 
-Tree Age Estimator gives a **rough, plausible age range** for a living tree from its species and circumference at breast height. It includes an experimental regional-average basal-area-increment (BAI) reference model and a conservative growth-factor fallback for ten New England species.
+Tree Age Estimator returns a **rough, plausible age range** for a living tree from species and circumference at breast height. It never claims to calculate an exact age.
 
-Circumference alone cannot reveal a tree's exact age. Competition, climate, disease, soil, damage, and growing context can produce very different ages at the same trunk size. Results are estimates, not planting dates or substitutes for increment-core measurements.
+Circumference is a weak proxy for age. Competition, climate, disease, soil, damage, and growing context can make equally sized trees very different ages. Do not use these estimates as planting dates or as substitutes for increment-core or historical evidence.
 
-## Supported species
-
-- White pine
-- Eastern hemlock (shown as Hemlock)
-- Yellow birch
-- Red spruce
-- Northern red oak (shown as Red oak)
-- Sugar maple
-- Balsam fir
-- White ash
-- American beech
-- Red maple
-
-Common variants and scientific names are accepted without regard to capitalization. For example, `eastern white pine`, `White Pine`, and `Pinus strobus` resolve to the same species.
-
-## Measure the tree
-
-Measure trunk circumference at breast height: 1.4 m (4.5 ft) above the ground. Keep a flexible tape level and snug around the trunk. Record centimeters or inches. Multi-stemmed, forked, leaning, or unusually swollen trees require forestry-specific measurement conventions and may not be suitable for this estimator.
-
-## Install and run
+## Quick start
 
 Python 3.10 or newer is required.
 
 ```bash
 python -m pip install -e .
-tree-age "Red Spruce" 100
-```
-
-The repository's compatibility script also works without installation:
-
-```bash
-python tree_age_calculator.py "red spruce" 100
-python tree_age_calculator.py "Acer rubrum" 40 --units in --context yard --json
-python tree_age_calculator.py "red maple" 100 --estimator bai_reference
-python tree_age_calculator.py "red maple" 100 --estimator growth_factor
-python tree_age_calculator.py "red maple" 100 --estimator fia_age_size --state MA
+tree-age estimate --species "red maple" --circumference 100 --units cm --state MA --context yard
 ```
 
 Example output:
 
 ```text
-Species: Red spruce
-Estimated age: about 102 years
-Plausible range: 61-163 years
-Confidence: very rough
-Estimator: bai_reference_v1
-Warning: This is a rough estimate from a regional-average BAI model, not a measured age.
-Warning: The model does not account for competition, disease, soil, climate, or tree-specific growth history.
+Species: Red maple
+Estimated age: about 61 years
+Likely range: 46-83 years
+Confidence: rough
+Estimator: fia_age_size_v1
+Warnings:
+- This baseline is trained on selected FIA site trees, not a random sample of all trees.
+- The interval is empirically calibrated to nominal 80% coverage on held-out FIA site trees.
+- FIA is forest-derived; open-grown yard and street trees may be younger.
 ```
 
-Use `--estimator` to select a registered algorithm, `--context forest|yard|street|unknown` to identify the growing setting, `--state` to retain location context, and `--json` for structured output. The current model does not adjust its estimate by state or context; it adds a warning for open-grown yard and street trees.
+JSON output uses the same library result:
 
-## Model and limitations
+```bash
+tree-age estimate --species "Acer rubrum" --circumference 40 --units in --state MA --context forest --format json
+```
 
-`growth_factor` multiplies DBH in inches by a species reference factor. It is stable and easy to interpret, but is only a horticultural rule of thumb; its interval is intentionally broad.
+The original positional form remains compatible:
 
-`bai_reference` is based on the species-level reference values reported in *Regionally Averaged Diameter Growth in New England Forests* (Smith, Hornbeck, Federer, and Krusic, USDA Forest Service Research Paper NE-637, 1990). It bounds the paper's 1950-1980 growth curve outside that period and integrates annual basal-area growth backward from the present.
+```bash
+python tree_age_calculator.py "red spruce" 100
+```
 
-`fia_age_size` is a transparent log-age/log-DBH baseline trained on selected FIA site trees from Connecticut and Massachusetts. It supports six well-sampled species and applies a state offset when trained data are available. See the [model card](docs/FIA_AGE_SIZE_V1_MODEL_CARD.md) and [evaluation report](docs/fia_age_size_v1_evaluation.json).
+## Measure the tree
 
-The broad interval is deliberately conservative, but it is a heuristic interval rather than a statistically calibrated confidence interval. The model is primarily forest-derived, limited to New England species, and does not model temperature, elevation, soil, suppression, release, management, or tree health.
+Measure trunk circumference at breast height: 1.4 m (4.5 ft) above the ground. Keep a flexible tape level and snug around the trunk. Record centimeters or inches. Multi-stemmed, forked, leaning, or swollen trees require forestry-specific conventions and may not suit this estimator.
+
+## Species and estimators
+
+List canonical names, scientific names, and FIA codes with:
+
+```bash
+tree-age species list
+```
+
+Ten New England species are recognized: white pine, eastern hemlock, yellow birch, red spruce, northern red oak, sugar maple, balsam fir, white ash, American beech, and red maple. Common variants and scientific names are case-insensitive. Ambiguous groups such as `oak` are rejected rather than silently resolved.
+
+The default `ensemble` uses `fia_age_size` when the species is supported and otherwise reports an explicit `growth_factor` fallback. Algorithms can also be selected directly:
+
+- `fia_age_size`: transparent CT/MA FIA site-tree log-age/log-DBH model for six well-sampled species, with state effects and empirical residual intervals.
+- `growth_factor`: stable but crude horticultural rule of thumb for all ten species.
+- `bai_reference`: experimental New England regional-average BAI reference model.
+- `ensemble`: FIA model first, growth-factor fallback second.
+
+Inspect packaged metadata and coefficients:
+
+```bash
+tree-age explain --estimator fia_age_size
+tree-age model check
+```
+
+## Interpret the interval
+
+The FIA model uses separate training, calibration, and validation partitions. Its conservative residual intervals target at least 80% coverage; observed held-out CT/MA coverage is 86.0%. That does **not** mean any individual tree has an 86% probability of lying in its range, nor does it transfer automatically to other regions or yard trees. Estimates outside a species' training DBH range receive wider intervals and a warning.
+
+Growth-factor and BAI intervals are broad heuristics, not statistically calibrated confidence intervals.
+
+## Forest, yard, and street context
+
+FIA data are forest-derived. `--context forest` is the closest match to the training domain. `yard`, `street`, and `unknown` add increasingly relevant warnings; no unvalidated multiplier is applied. Street-tree management and urban stress can counteract the faster growth often seen in open-grown trees.
+
+## Data, validation, and limitations
+
+The v1 empirical artifact uses selected FIA site trees from Connecticut and Massachusetts. Held-out MAE is 11.808 years versus 14.124 years for the growth-factor fallback on the same records. It does not model tree health, competition, climate, height, elevation, soil, suppression, release, or management history.
+
+- [FIA age-size v1 model card](docs/FIA_AGE_SIZE_V1_MODEL_CARD.md)
+- [Machine-readable evaluation report](docs/fia_age_size_v1_evaluation.json)
+- [FIA download, cleaning, and quality workflow](docs/FIA_DATA_PIPELINE.md)
+- [Development roadmap](ROADMAP.md)
+
+FVS integration remains optional and deliberately separate: FVS is useful for forward projection and sanity checks, not ground-truth backward age inference. A web/API layer is likewise optional; the tested library and JSON CLI are the stable interface for v1.
 
 ## Development
 
 ```bash
 python -m pip install -e .
 python -m unittest discover -s tests -v
+python -m tree_age.fia.cli download --states CT MA
+python -m tree_age.fia.cli clean --states CT MA
+python -m tree_age.modeling.train data/processed/fia_new_england_clean.csv
 ```
 
-The implementation roadmap is in [ROADMAP.md](ROADMAP.md). The safe CLI, modular estimator registry, conservative fallback, and reproducible USDA FIA pipeline are complete; empirical model training and calibrated uncertainty are next.
-
-The reproducible FIA download and cleaning workflow is documented in [docs/FIA_DATA_PIPELINE.md](docs/FIA_DATA_PIPELINE.md). Data quality review is a required gate before model training.
+Raw and processed FIA data are ignored by Git. Model artifacts, model cards, provenance, and evaluation summaries are versioned.
 
 ## License
 

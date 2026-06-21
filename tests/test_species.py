@@ -13,7 +13,11 @@ class SpeciesTests(unittest.TestCase):
         with self.assertRaisesRegex(UnknownSpeciesError, "Supported species"):
             resolve_species("truffula")
 
+    def test_fia_code_and_ambiguous_group(self):
+        self.assertEqual(resolve_species("Pinus strobus").fia_code, 129)
+        with self.assertRaisesRegex(UnknownSpeciesError, "ambiguous"):
+            resolve_species("oak")
+
 
 if __name__ == "__main__":
     unittest.main()
-
